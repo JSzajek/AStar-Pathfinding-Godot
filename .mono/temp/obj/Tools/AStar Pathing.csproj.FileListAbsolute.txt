@@ -1,0 +1,5 @@
+C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\obj\Tools\AStar Pathing.csprojAssemblyReference.cache
+C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\bin\Tools\AStar Pathing.dll
+C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\bin\Tools\AStar Pathing.pdb
+C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\obj\Tools\AStar Pathing.dll
+C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\obj\Tools\AStar Pathing.pdb

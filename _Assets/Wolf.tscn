@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://_Scripts/Enemy.cs" type="Script" id=1]
+[ext_resource path="res://_Scripts/Body.cs" type="Script" id=2]
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 1, 0.852079, 0.543905 )
+
+[node name="Wolf" type="KinematicBody"]
+script = ExtResource( 1 )
+
+[node name="Head" type="Position3D" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.0131527, 1.32976, -1.15162 )
+
+[node name="Forward" type="Position3D" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.0131527, 1.34547, -2.43506 )
+
+[node name="Body" type="Spatial" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.0131528, 0.969363, 0.04805 )
+script = ExtResource( 2 )
+
+[node name="Torso" type="MeshInstance" parent="Body"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Leg" type="MeshInstance" parent="Body/Torso"]
+transform = Transform( 0.173046, 0, 0, 0, 1, 0, 0, 0, 0.344887, -0.72389, -1.52556, 0.73112 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Leg2" type="MeshInstance" parent="Body/Torso"]
+transform = Transform( 0.173046, 0, 0, 0, 1, 0, 0, 0, 0.344887, 0.662269, -1.52556, 0.73112 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Leg4" type="MeshInstance" parent="Body/Torso"]
+transform = Transform( 0.173046, 0, 0, 0, 1, 0, 0, 0, 0.344887, -0.72389, -1.52556, -0.718334 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Leg3" type="MeshInstance" parent="Body/Torso"]
+transform = Transform( 0.173046, 0, 0, 0, 1, 0, 0, 0, 0.344887, 0.662269, -1.52556, -0.718334 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Tail" type="MeshInstance" parent="Body/Torso"]
+transform = Transform( 0.0616102, -0.139294, 0, 0.0357429, 0.96041, 0, 0, 0, 0.245565, 1.12711, -0.707073, -0.0223206 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Head" type="Spatial" parent="Body"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.983109, 0.376108, 0 )
+
+[node name="Skull" type="MeshInstance" parent="Body/Head"]
+transform = Transform( 0.4, 0, 0, 0, 0.418573, 0, 0, 0, 0.441436, -0.17802, -0.0759312, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Snout" type="MeshInstance" parent="Body/Head/Skull"]
+transform = Transform( 0.635952, 0, 0, 0, 0.591689, 0, 0, 0, 0.704078, -1.21368, -0.394125, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Ear" type="MeshInstance" parent="Body/Head/Skull"]
+transform = Transform( 0.182953, 0, 0, 0, 0.310268, 0, 0, 0, 0.248325, 0.511042, 1.18842, -0.611745 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Ear2" type="MeshInstance" parent="Body/Head/Skull"]
+transform = Transform( 0.182953, 0, 0, 0, 0.310268, 0, 0, 0, 0.248326, 0.511042, 1.18842, 0.531093 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.0131528, 0.557098, 0.04805 )
+shape = SubResource( 2 )
