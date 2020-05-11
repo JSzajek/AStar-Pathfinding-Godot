@@ -1,0 +1,9 @@
+.vscode/
+.mono/
+.import/
+AStar Pathing.csproj
+AStar Pathing.sln
+astarlinker_debug.txt
+project.godot
+default_env.tres
+export_presets.cfg
