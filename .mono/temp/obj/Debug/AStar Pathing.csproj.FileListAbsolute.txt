@@ -1,5 +1,0 @@
-C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\bin\Debug\AStar Pathing.dll
-C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\bin\Debug\AStar Pathing.pdb
-C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\obj\Debug\AStar Pathing.csprojAssemblyReference.cache
-C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\obj\Debug\AStar Pathing.dll
-C:\Users\Justin\Documents\Godot Projects\AStar Pathing\.mono\temp\obj\Debug\AStar Pathing.pdb
