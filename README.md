@@ -1,5 +1,5 @@
 # AStar Implementation-Godot #
-An AStar Pathfinding implementation in Godot game engine.
+An AStar Pathfinding implementations in Godot game engine.
 
 This is an rework of the [previous attempt](https://gitlab.com/jszajek/astar-godot) at 3d path finding within the Godot game engine - Version 3.2. 
 It utilizes C# over gdscript along with loaded C++ libraries containing AStar pathfinding algorithm. In attempts
@@ -10,6 +10,8 @@ a way that they can be utilized in other game engines as well (eg. Unity).
 **Disclaimer:** All implementations refernce their relevent sources. As well as none of these implementations claim to be the
 most efficent implementation - probably more efficent implementations within the engine. 
 But these implementations are done in an exercise to learn about the involved algorithms. 
+
+Image utilized for background in menu screen can be found [here](https://www.clipart.email/download/4510544.html)
 
 ### Capabilities / Advantages: ###
 * Naive Binary Heap - to increase path-node comparison efficiency
@@ -85,5 +87,3 @@ polygon depicted in red, blue, and green respectively. There still needs to be p
 the graph to produce better paths.
 
 ![alt text](/AStar_Navmesh_Example.png)
-
-
