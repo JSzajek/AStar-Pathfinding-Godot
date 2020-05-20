@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://_Assets/BaseCanvas.tscn" type="PackedScene" id=1]
+[ext_resource path="res://_Gui_Imports/Title_Font.res" type="DynamicFont" id=3]
+
+[node name="Canvas" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -63.5
+margin_top = 30.0
+margin_right = 63.5
+margin_bottom = 87.0
+custom_fonts/font = ExtResource( 3 )
+text = "A* Grid"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Canvas" parent="." instance=ExtResource( 1 )]

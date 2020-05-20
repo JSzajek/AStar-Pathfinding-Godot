@@ -1,8 +1,10 @@
 using System;
 using Godot;
 using System.Collections.Generic;
+using System.Collections;
 using System.Threading;
 using GTimer = Godot.Timer;
+using Thread = System.Threading.Thread;
 
 /// <summary>
 /// Struct representing a path request
@@ -12,6 +14,7 @@ public struct PathRequest
     public Vector3 pathStart, pathEnd;
     public bool smooth;
     public float turnDist, stopDist;
+    public int hash;
     public Action<Path, bool> callback;
 
     /// <summary>
@@ -20,8 +23,9 @@ public struct PathRequest
     /// <param name="callback">The calllback method to return the results to</param>
     /// <param name="start">The start point of the path</param>
     /// <param name="end">The ending point of the path</param>
-    public PathRequest(Action<Path, bool> callback, Vector3 start, Vector3 end)
+    public PathRequest(Action<Path, bool> callback, Vector3 start, Vector3 end, int hash)
     {
+        this.hash = hash;
         this.pathStart = start;
         this.pathEnd = end;
         this.callback = callback;
@@ -38,7 +42,7 @@ public struct PathRequest
     /// <param name="turnDist">The turn radius (amount of turning)</param>
     /// <param name="stopDist">The stop distance for slowdown and walking on actual end point</param>
     /// <returns></returns>
-    public PathRequest(Action<Path, bool> callback, Vector3 start, Vector3 end, float turnDist, float stopDist) : this(callback, start, end) {
+    public PathRequest(Action<Path, bool> callback, Vector3 start, Vector3 end, int hash, float turnDist, float stopDist) : this(callback, start, end, hash) {
         this.smooth = true;
         this.turnDist = turnDist;
         this.stopDist = stopDist;
@@ -50,6 +54,7 @@ public struct PathRequest
 /// </summary>
 public struct PathResult
 {
+    public int hash;
     public Path path;
     public bool success;
     public Action<Path, bool> callback;
@@ -60,8 +65,9 @@ public struct PathResult
     /// <param name="path">The path of the path result</param>
     /// <param name="success">Whether it was a success</param>
     /// <param name="callback">The callback method to return the path to</param>
-    public PathResult(Path path, bool success, Action<Path, bool> callback)
+    public PathResult(Path path, bool success, int hash, Action<Path, bool> callback)
     {
+        this.hash = hash;
         this.path = path;
         this.success = success;
         this.callback = callback;
@@ -118,23 +124,36 @@ public class PathRequestManager : Node
     private const float POLL_RATE = 0.3f;
     
     static PathRequestManager instance;
-    private AStarLinker AStarLinker;
+    private IAStarLinker AStarLinker;
     private Queue<PathResult> results = new Queue<PathResult>();
     private GTimer timer;
+    private Hashtable table;
 
     /// <summary>
     /// Constructor to initialize the pathrequest manager parameters
     /// </summary>
     /// <param name="linker">AStar algorithm linker that calculates the pathes</param>
     /// <param name="addNode">Action to add node into scene from outside scene</param>
-    public PathRequestManager(AStarLinker linker, Action<Node> addNode)
+    public PathRequestManager(IAStarLinker linker, Action<Node> addNode)
     {
         instance = this;
+        table = new Hashtable();
         AStarLinker = linker;
         timer = new GTimer();
         addNode(timer); // Add timer node from outside scene
         timer.Connect("timeout", this, "poll_time_out");
         timer.Start(POLL_RATE);
+    }
+
+    public void Destroy() {
+        // Wait for any on going threads to join main thread before destroying
+        foreach(var s in table) {
+            if (table[s] is Thread thread) {
+                if (thread.IsAlive) {
+                    thread.Join(1500);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -153,16 +172,30 @@ public class PathRequestManager : Node
         }
     }
 
+    private void BackgroundTaskWithObject(System.Object stateInfo)  
+    {  
+        if (stateInfo is PathRequest request) {
+            instance.AStarLinker.getPath(request, FinishedProcessingPath);
+        }
+    }  
+
     /// <summary>
     /// Requesting method to request a path request.
     /// </summary>
     /// <param name="request">The path request (basic/smooth)</param>
     public void RequestPath(PathRequest request)
     {
+        // Prevent sequential pathrequest tasks from piling up.
+        if (table.Contains(request.hash)) {
+            return;
+        }
+
         ThreadStart startThread = delegate {
-            instance.AStarLinker.getPath(request, FinishedProcessingPath);
+           instance.AStarLinker.getPath(request, FinishedProcessingPath);
         };
-        startThread.Invoke();
+        Thread t = new Thread(startThread);
+        table.Add(request.hash, t);
+        t.Start();
     }
 
     /// <summary>
@@ -174,6 +207,8 @@ public class PathRequestManager : Node
     {
         lock(results) {
             results.Enqueue(result);
+            //(table[result.hash] as Thread).Join();
+            table.Remove(result.hash);
         }
     }
 }

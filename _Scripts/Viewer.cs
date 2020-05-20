@@ -6,7 +6,7 @@ using Godot;
 public class Viewer : KinematicBody
 {
     private const int MIN_SCROLL = -5;
-	private const int MAX_SCROLL = -20;
+	private const int MAX_SCROLL = -35;
     private float mouse_sensitivity = 0.0075f;
 
     private float panSpeed = 15;
@@ -29,7 +29,7 @@ public class Viewer : KinematicBody
     /// </summary>
     public override void _Ready() {
         spaceState = GetWorld().DirectSpaceState;
-        canvas = this.Get<Canvas>("/root/Main/Canvas");
+        canvas = this.Get<Canvas>("/root/Main/Canvas/Canvas");
         pivot = GetNode<Spatial>("Pivot");
         swivel = GetNode<Spatial>("Pivot/Swivel");
         camera = GetNode<Camera>("Pivot/Swivel/Camera");
@@ -83,7 +83,7 @@ public class Viewer : KinematicBody
     /// Captures user input
     /// </summary>
     private void GetInput() {
-        rotating = Input.IsMouseButtonPressed(3); // Middle button pressed
+        rotating = Input.IsMouseButtonPressed(2); // Right button pressed
         
         // Scrolling controls
         var pos = camera.Transform.origin;

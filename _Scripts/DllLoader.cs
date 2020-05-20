@@ -13,13 +13,13 @@ public class DllLoader : Node
     // Predefined of library types
     public enum LibType 
     {
-        ASTAR
+        GRID_ASTAR, KDTREE_ASTAR, NAVMESH_ASTAR
     }
     
     // Loaded Libraries dictionary
     private Dictionary<LibType, string> dllPaths {get;} = new Dictionary<LibType, string>()
     {
-        {LibType.ASTAR, dllDirPath + "AstarBinding.dll"}
+        {LibType.GRID_ASTAR, dllDirPath + "Grid_AstarBinding.dll"}
     };
 
     private Dictionary<LibType, Dll> dllLib;
@@ -102,20 +102,20 @@ public class DllLoader : Node
         }
         switch(type)
         {
-            case LibType.ASTAR:
-                output = new AStarLinker(dllPaths[LibType.ASTAR]); 
-                dllLib.Add(LibType.ASTAR, output);
+            case LibType.GRID_ASTAR:
+                output = new Grid_AStarLinker(dllPaths[LibType.GRID_ASTAR]); 
+                dllLib.Add(LibType.GRID_ASTAR, output);
                 return output;
         }
         return null; // Should never happen
     }
 
     /// <summary>
-    /// Getter method to get an AStar Linker library dll
+    /// Getter method to get an Grid AStar Linker library dll
     /// </summary>
-    /// <returns>An AStarLinker dll</returns>
-    public AStarLinker GetAStarLinker()
+    /// <returns>An Grid AStarLinker dll</returns>
+    public Grid_AStarLinker GetAStarLinker()
     {
-        return Load(LibType.ASTAR) as AStarLinker;
+        return Load(LibType.GRID_ASTAR) as Grid_AStarLinker;
     }
 }

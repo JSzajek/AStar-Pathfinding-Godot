@@ -6,7 +6,7 @@ using Godot.Collections;
 /// Class representing AStar pathfinding and generating
 /// the corresponding grid map
 /// </summary>
-public class AStar : Spatial 
+public class Grid_AStar : Spatial, IAStar 
 {
 	private const float MIN_PATH_UPDATE_TIME = 0.2f;
 	private bool _visualizeGrid = false;
@@ -50,7 +50,7 @@ public class AStar : Spatial
 	private uint collisionMaskBit;
 
 	private readonly DllLoader loader = new DllLoader();
-	private AStarLinker AStarLinker;
+	private Grid_AStarLinker AStarLinker;
 	private Timer pathTimer;
 	private PathRequestManager pathRequestManager;
 	private PhysicsDirectSpaceState direct_space;
@@ -129,7 +129,7 @@ public class AStar : Spatial
 		}
 		
 		// Initial grid generation
-		GenerateGrid();
+		GenerateMap();
 	}
 
 	/// <summary>
@@ -161,7 +161,7 @@ public class AStar : Spatial
 	/// <summary>
 	/// Generates the astar grid map
 	/// </summary>
-	public void GenerateGrid()
+	public void GenerateMap()
 	{
 		var nodeDiameter = nodeRadius * 2;
 		_gridSizeX = Mathf.CeilToInt(region.x / nodeDiameter);

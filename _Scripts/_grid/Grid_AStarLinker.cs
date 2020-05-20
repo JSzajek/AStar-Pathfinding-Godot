@@ -3,10 +3,10 @@ using System;
 using System.Runtime.InteropServices;
 
 /// <summary>
-/// AStarLinker dll class representing an 
+/// Grid AStarLinker dll class representing an 
 /// library for AStar pathfinding functionality.
 /// </summary>
-public class AStarLinker : Dll {
+public class Grid_AStarLinker : Dll, IAStarLinker {
 	
 	#region Delegates
 
@@ -42,7 +42,7 @@ public class AStarLinker : Dll {
 	/// </summary>
 	/// <param name="filePath">The file path to the dll</param>
 	/// <returns></returns>
-	public AStarLinker(string filePath) : base(filePath)
+	public Grid_AStarLinker(string filePath) : base(filePath)
 	{
 		setup = (setupGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "setup"), typeof(setupGrid));
 		add = (addGridPoint)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "addPoint"), typeof(addGridPoint));
@@ -97,40 +97,42 @@ public class AStarLinker : Dll {
 	/// <param name="callback">The callback to return the result to</param>
 	public void getPath(PathRequest request, Action<PathResult> callback)
 	{
-		(var start, var end) = (request.pathStart, request.pathEnd);
-		IntPtr pathPtr = path(start.x, start.y, start.z, end.x, end.y, end.z, request.smooth, request.turnDist, request.stopDist);
+		lock(path) {
+			(var start, var end) = (request.pathStart, request.pathEnd);
+			IntPtr pathPtr = path(start.x, start.y, start.z, end.x, end.y, end.z, request.smooth, request.turnDist, request.stopDist);
 
-		float[] sizeArray = new float[1];
-		Marshal.Copy(pathPtr, sizeArray, 0, 1);
-		int size = (int)sizeArray[0];
-		if (size == 1)
-		{
-			// TODO: Fix Empty Path Bug -- requester becomes stuck on an unwalkable node
-			callback(new PathResult(null, false, request.callback));
-		}
-
-		
-		float[] points = new float[size];
-		Marshal.Copy(pathPtr, points, 0, size);
-		
-		if (request.smooth) {
-			var finishIndex = (int)points[1];
-			var slowIndex = (int)points[2];
-
-			Vector3[] waypoints = new Vector3[(size-3) / 10];
-			Line[] lines = new Line[(size-3) / 10];
-			for (int i = 3; i < size; i += 10) {
-				waypoints[i/10] = new Vector3(points[i], points[i + 1], points[i+2]);
-				lines[i/10] = new Line(points[i+3], points[i+4], new Vector2(points[i+5], points[i+6]), new Vector2(points[i+7], points[i+8]), (int)points[i+9]);
+			float[] sizeArray = new float[1];
+			Marshal.Copy(pathPtr, sizeArray, 0, 1);
+			int size = (int)sizeArray[0];
+			if (size == 1)
+			{
+				// TODO: Fix Empty Path Bug -- requester becomes stuck on an unwalkable node
+				callback(new PathResult(null, false, request.hash, request.callback));
 			}
-			callback(new PathResult(new SmoothPath(waypoints, lines, finishIndex, slowIndex), true, request.callback));
-		} 
-		else {
-			Vector3[] waypoints = new Vector3[(size-1) / 3];
-			for (int i = 1; i < size; i += 3) {
-				waypoints[i/3] = new Vector3(points[i], points[i + 1], points[i+2]);
+
+			
+			float[] points = new float[size];
+			Marshal.Copy(pathPtr, points, 0, size);
+			
+			if (request.smooth) {
+				var finishIndex = (int)points[1];
+				var slowIndex = (int)points[2];
+
+				Vector3[] waypoints = new Vector3[(size-3) / 10];
+				Line[] lines = new Line[(size-3) / 10];
+				for (int i = 3; i < size; i += 10) {
+					waypoints[i/10] = new Vector3(points[i], points[i + 1], points[i+2]);
+					lines[i/10] = new Line(points[i+3], points[i+4], new Vector2(points[i+5], points[i+6]), new Vector2(points[i+7], points[i+8]), (int)points[i+9]);
+				}
+				callback(new PathResult(new SmoothPath(waypoints, lines, finishIndex, slowIndex), true, request.hash, request.callback));
+			} 
+			else {
+				Vector3[] waypoints = new Vector3[(size-1) / 3];
+				for (int i = 1; i < size; i += 3) {
+					waypoints[i/3] = new Vector3(points[i], points[i + 1], points[i+2]);
+				}
+				callback(new PathResult(new Path(waypoints), true, request.hash, request.callback));
 			}
-			callback(new PathResult(new Path(waypoints), true, request.callback));
 		}
 	}
 

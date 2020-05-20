@@ -9,7 +9,7 @@ public class EntityController : Entity
 	private const float PATH_UPDATE_MOVE_THRESHOLD = 0.5f;
 	private const float sqr_move_threshold = PATH_UPDATE_MOVE_THRESHOLD * PATH_UPDATE_MOVE_THRESHOLD;
 	
-	private AStar AStar;
+	private IAStar AStar;
 	private Vector3 target, targetOldPosition;
 	
 	private bool following, requesting, smoothPath = false, showPath = false;
@@ -28,7 +28,7 @@ public class EntityController : Entity
 	public override void _Ready()
 	{
 		base._Ready();
-		AStar = this.Get<AStar>("/root/Main/AStar_Linker");
+		AStar = this.Get<IAStar>("/root/Main/AStar_Linker");
 		AStar?.ConnectToTimer(this, "On_Path_Update_Timer_timeout");
 	}
 
@@ -61,10 +61,10 @@ public class EntityController : Entity
 		this.target = target;
 		targetOldPosition = target;
 		if (smoothPath) {
-			AStar?.RequestPath(new PathRequest(OnPathFound, GetGlobalPosition(), target, turnDist, stopDist));
+			AStar?.RequestPath(new PathRequest(OnPathFound, GetGlobalPosition(), target, this.GetHashCode(), turnDist, stopDist));
 		}
 		else {
-			AStar?.RequestPath(new PathRequest(OnPathFound, GetGlobalPosition(), target));
+			AStar?.RequestPath(new PathRequest(OnPathFound, GetGlobalPosition(), target, this.GetHashCode()));
 		}
 	}
 
@@ -196,7 +196,7 @@ public class EntityController : Entity
 	/// Path drawing method for debug testing
 	/// </summary>
 	public void DrawPath() {
-		var debug = AStar.Get<Spatial>("Debug");
+		var debug = this.Get<Spatial>("/root/Main/AStar_Linker/Debug");
 		ImmediateGeometry geometry;
 		if (debug.Get<ImmediateGeometry>(Name) is ImmediateGeometry geom) {
 			geometry = geom;

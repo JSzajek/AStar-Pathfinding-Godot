@@ -1,0 +1,373 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://_Scripts/Canvas.cs" type="Script" id=1]
+[ext_resource path="res://_Gui_Imports/arrow_back_ios-24px.svg" type="Texture" id=2]
+[ext_resource path="res://_Gui_Imports/left_click.png" type="Texture" id=3]
+[ext_resource path="res://_Gui_Imports/right_click.png" type="Texture" id=4]
+[ext_resource path="res://_Gui_Imports/scroll.png" type="Texture" id=5]
+[ext_resource path="res://_Gui_Imports/Normal_Font.res" type="DynamicFont" id=6]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.482353, 0.482353, 0.482353, 0.376471 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.219608, 0.219608, 0.25098, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.92549, 0.92549, 0.92549, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0, 0, 0, 1 )
+border_blend = true
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.172549, 0.172549, 0.172549, 1 )
+
+[node name="Canvas" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="astar_panel" type="Panel" parent="."]
+margin_top = 75.0
+margin_right = 270.0
+margin_bottom = 295.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="title" type="Label" parent="astar_panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -58.0
+margin_top = 10.0
+margin_right = 58.0
+margin_bottom = 24.0
+text = "Control Properties"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="astar_toggle" type="Button" parent="astar_panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -20.0
+focus_mode = 0
+keep_pressed_outside = true
+text = "<"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="astar_panel"]
+
+[node name="Dummy" type="Button" parent="astar_panel"]
+visible = false
+margin_right = 12.0
+margin_bottom = 20.0
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="astar_panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -117.0
+margin_top = 30.0
+margin_right = 98.0
+margin_bottom = 205.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="KeyArrows" type="Panel" parent="astar_panel/Panel"]
+margin_left = 10.0
+margin_top = 11.0
+margin_right = 100.0
+margin_bottom = 81.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Up" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -9.0
+margin_top = 5.898
+margin_right = 7.99999
+margin_bottom = 22.898
+rect_scale = Vector2( 1.2, 1.2 )
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Up"]
+position = Vector2( 8.5, 12 )
+rotation = 1.57079
+scale = Vector2( 0.65, 0.55 )
+texture = ExtResource( 2 )
+
+[node name="Down" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 11.4728
+margin_top = 48.7247
+margin_right = 28.4728
+margin_bottom = 65.7247
+rect_rotation = 180.0
+rect_scale = Vector2( 1.2, 1.2 )
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Down"]
+position = Vector2( 8.5, 12 )
+rotation = 1.57079
+scale = Vector2( 0.65, 0.55 )
+texture = ExtResource( 2 )
+
+[node name="Right" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 33.3755
+margin_top = 28.9897
+margin_right = 50.3755
+margin_bottom = 45.9897
+rect_rotation = 90.0
+rect_scale = Vector2( 1.2, 1.2 )
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Right"]
+position = Vector2( 8.5, 12 )
+rotation = 1.57079
+scale = Vector2( 0.65, 0.55 )
+texture = ExtResource( 2 )
+
+[node name="Left" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -31.7107
+margin_top = 49.3193
+margin_right = -14.7107
+margin_bottom = 66.3193
+rect_rotation = -89.9999
+rect_scale = Vector2( 1.2, 1.2 )
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Left"]
+position = Vector2( 8.5, 12 )
+rotation = 1.57079
+scale = Vector2( 0.65, 0.55 )
+texture = ExtResource( 2 )
+
+[node name="Label3" type="Label" parent="astar_panel/Panel/KeyArrows"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -42.0
+margin_top = -18.0
+margin_right = 42.0
+margin_bottom = -4.0
+text = "Panning View"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Targeting" type="Panel" parent="astar_panel/Panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 2.5
+margin_top = 11.0
+margin_right = 92.5
+margin_bottom = 81.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="astar_panel/Panel/Targeting"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -39.0
+margin_top = -18.0
+margin_right = 39.0
+margin_bottom = -4.0
+text = "Move Target"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="left_click" type="Sprite" parent="astar_panel/Panel/Targeting"]
+position = Vector2( 42.1136, 27.7168 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 3 )
+
+[node name="Rotating" type="Panel" parent="astar_panel/Panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -97.5
+margin_top = 91.0
+margin_right = -7.49998
+margin_bottom = 161.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="astar_panel/Panel/Rotating"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -39.0
+margin_top = -18.0
+margin_right = 39.0
+margin_bottom = -3.99999
+text = "Rotate View"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="right_click" type="Sprite" parent="astar_panel/Panel/Rotating"]
+position = Vector2( 42.1136, 27.7168 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 4 )
+
+[node name="Scrolling" type="Panel" parent="astar_panel/Panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 2.49999
+margin_top = 91.0
+margin_right = 92.5
+margin_bottom = 161.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="astar_panel/Panel/Scrolling"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -36.0
+margin_top = -18.0
+margin_right = 37.0
+margin_bottom = -3.99999
+text = "Zoom View"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="scroll" type="Sprite" parent="astar_panel/Panel/Scrolling"]
+position = Vector2( 42.1136, 27.7168 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 5 )
+
+[node name="debug_panel" type="Panel" parent="."]
+margin_top = 320.0
+margin_right = 270.0
+margin_bottom = 527.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="title" type="Label" parent="debug_panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -58.0
+margin_top = 10.0
+margin_right = 58.0
+margin_bottom = 24.0
+text = "Logger"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="debug_toggle" type="Button" parent="debug_panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -20.0
+keep_pressed_outside = true
+text = "<"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="debug_panel"]
+
+[node name="Dummy" type="Button" parent="debug_panel"]
+visible = false
+margin_right = 12.0
+margin_bottom = 20.0
+mouse_filter = 2
+
+[node name="Panel2" type="Panel" parent="debug_panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -117.0
+margin_top = 30.0
+margin_right = 96.0
+margin_bottom = 194.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel3" type="Panel" parent="debug_panel/Panel2"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -100.0
+margin_top = -76.5
+margin_right = 100.0
+margin_bottom = 76.5
+custom_styles/panel = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="debug_panel/Panel2/Panel3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+scroll_following = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="back_button" type="Button" parent="."]
+margin_right = 102.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 6 )
+text = "< Back"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="astar_panel/astar_toggle" to="." method="_on_astar_toggle_pressed"]
+[connection signal="pressed" from="debug_panel/debug_toggle" to="." method="_on_debug_toggle_pressed"]
+[connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

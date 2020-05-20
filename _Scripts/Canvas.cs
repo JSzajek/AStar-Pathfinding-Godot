@@ -5,10 +5,20 @@ using Godot;
 /// </summary>
 public class Canvas : Control
 {
-	private AStar aStar;
-	private Panel astarPanel;
-	private Button astarToggle;
-	private Tween astarTween;
+	private PackedScene mainMenu;
+
+	private IAStar aStar;
+	private Panel astarPanel, debugPanel;
+	private Button astarToggle, debugToggle;
+	private Tween astarTween, debugTween;
+
+	public Canvas() {
+		mainMenu = ResourceLoader.Load<PackedScene>("res://_Scenes/MainMenu.tscn");
+	}
+
+	public void _on_back_button_pressed() {
+		GetTree().ChangeSceneTo(mainMenu);
+	}
 
 	/// <summary>
 	/// Initializing parameters
@@ -17,8 +27,13 @@ public class Canvas : Control
 	{
 		astarPanel = this.Get<Panel>("astar_panel");
 		astarToggle = astarPanel.Get<Button>("astar_toggle");
+
+		debugPanel = this.Get<Panel>("debug_panel");
+		debugToggle = debugPanel.Get<Button>("debug_toggle");
+		
 		astarTween = astarPanel.Get<Tween>("Tween");
-		aStar = this.Get<AStar>("/root/Main/AStar_Linker");
+		debugTween = debugPanel.Get<Tween>("Tween");
+		aStar = this.Get<IAStar>("../../AStar_Linker");
 	}
 
 	/// <summary>
@@ -35,11 +50,14 @@ public class Canvas : Control
 		astarTween.Start();
 	}
 
-	/// <summary>
-	/// On pressed visualization button capture method
-	/// </summary>
-	public void _on_Visualize_pressed() {
-		aStar.visualizeGrid = !aStar.visualizeGrid;
-		astarPanel.Get<Button>("Visualize").Text = aStar.visualizeGrid ? "Hide Grid" : "Show Grid";
+	public void _on_debug_toggle_pressed() {
+		if (debugTween.IsActive()) {
+			return;
+		}
+		var displacement = (debugPanel.RectSize.x - debugToggle.RectSize.x) * (debugPanel.RectPosition.x < 0 ? 0 : -1);
+        debugToggle.Text = displacement < 0 ? ">" : "<";
+		var goal = new Vector2(displacement, debugPanel.RectPosition.y);
+		debugTween.InterpolateProperty(debugPanel, "rect_position", debugPanel.RectPosition, goal, 1.0f);
+		debugTween.Start();
 	}
 }
