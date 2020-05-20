@@ -31,9 +31,41 @@ Clicking the scene will move the flag, causing them to follow. Thereby, exemplif
 the pathfinding algorithm.
 
 #### Included ####
-* Primary Scripts, Assets, Scenes
+* Primary Scripts, Assets, Imports, Scenes
 * Built Executable Project ([here](/_Build/Build_1.0/))
 
 
-#### Example Pathing ####
+### Pathfinding Implementations ###
+
+#### AStar with Grid ####
+This implementation utilizes a basic 2 dimensional grid of path nodes to perform A* pathfinding. This attempt was
+heavily based on this [tutorial](https://www.youtube.com/playlist?list=PLFt_AvWsXl0cq5Umv3pMC9SPnKjfp9eGW).
+
 ![alt text](/Pathing_Example.png)
+
+#### AStar with KDTree ####
+This implementation utilizes a K-Dimensional Tree ([more information here](https://en.wikipedia.org/wiki/K-d_tree)).
+This was done in an attempt to have a more efficient method of adding sections of the map and potentially removing chunks
+for games with procedural map generation or just memory conservation by removing unlikely chunks. Since the KD tree 
+represents an average search time of O(logn) as well as removal of the same time. This is better than potentially
+recompiling the grid within the previous approach. But mostly this attempt was an attempt at getting easily layered
+astar pathfinding without the need to implement complex 3 dimensional arrays.
+
+-- Insert Example Image here
+
+##### Issues #####
+This implementation also presented significant issues. From my initial testing I believe it is due to the nature of 
+axis splitting within the KD tree or may be an issue within my current KD tree implementation. But from
+quick research it seems that KD trees don't always offer the ability to gather the 'exact' nearest neighbors
+required for astar. Thus resulting in missing or enlongated routes. Nonetheless more testing is required - 
+which may be unnecessary given the performance of the next implementation.
+
+Nearest Neighbors Issue:
+-- Insert Example Image here
+
+#### Navmesh Implementation ####
+To be added
+
+
+
+
