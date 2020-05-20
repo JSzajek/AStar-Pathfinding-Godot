@@ -6,11 +6,11 @@ using Godot;
 public class Canvas : Control
 {
 	private PackedScene mainMenu;
+	private Panel propPanel, debugPanel;
+	private Button propToggle, debugToggle;
+	private Tween propTween, debugTween;
+	private Label fps;
 
-	private IAStar aStar;
-	private Panel astarPanel, debugPanel;
-	private Button astarToggle, debugToggle;
-	private Tween astarTween, debugTween;
 
 	public Canvas() {
 		mainMenu = ResourceLoader.Load<PackedScene>("res://_Scenes/MainMenu.tscn");
@@ -25,29 +25,35 @@ public class Canvas : Control
 	/// </summary>
 	public override void _Ready()
 	{
-		astarPanel = this.Get<Panel>("astar_panel");
-		astarToggle = astarPanel.Get<Button>("astar_toggle");
+		propPanel = this.Get<Panel>("prop_panel");
+		propToggle = propPanel.Get<Button>("prop_toggle");
 
 		debugPanel = this.Get<Panel>("debug_panel");
 		debugToggle = debugPanel.Get<Button>("debug_toggle");
 		
-		astarTween = astarPanel.Get<Tween>("Tween");
+		propTween = propPanel.Get<Tween>("Tween");
 		debugTween = debugPanel.Get<Tween>("Tween");
-		aStar = this.Get<IAStar>("../../AStar_Linker");
+		
+		fps = this.Get<Label>("fps");
+	}
+
+	public override void _Process(float delta)
+	{
+		fps.Text = "FPS: " + Engine.GetFramesPerSecond();
 	}
 
 	/// <summary>
 	/// On pressed toggle button capture method
 	/// </summary>
 	public void _on_astar_toggle_pressed() {
-		if (astarTween.IsActive()) {
+		if (propTween.IsActive()) {
 			return;
 		}
-		var displacement = (astarPanel.RectSize.x - astarToggle.RectSize.x) * (astarPanel.RectPosition.x < 0 ? 0 : -1);
-        astarToggle.Text = displacement < 0 ? ">" : "<";
-		var goal = new Vector2(displacement, astarPanel.RectPosition.y);
-		astarTween.InterpolateProperty(astarPanel, "rect_position", astarPanel.RectPosition, goal, 1.0f);
-		astarTween.Start();
+		var displacement = (propPanel.RectSize.x - propToggle.RectSize.x) * (propPanel.RectPosition.x < 0 ? 0 : -1);
+        propToggle.Text = displacement < 0 ? ">" : "<";
+		var goal = new Vector2(displacement, propPanel.RectPosition.y);
+		propTween.InterpolateProperty(propPanel, "rect_position", propPanel.RectPosition, goal, 1.0f);
+		propTween.Start();
 	}
 
 	public void _on_debug_toggle_pressed() {

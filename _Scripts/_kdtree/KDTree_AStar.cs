@@ -6,9 +6,9 @@ using Godot.Collections;
 /// Class representing AStar pathfinding and generating
 /// the corresponding grid map
 /// </summary>
-public class Grid_AStar : Spatial, IAStar 
+public class KDTree_AStar : Spatial, IAStar 
 {
-	private const float MIN_PATH_UPDATE_TIME = 0.2f;
+	private const float MIN_PATH_UPDATE_TIME = 0.3f;
 	private bool _visualizeGrid = false;
 
 	[Export]
@@ -37,7 +37,7 @@ public class Grid_AStar : Spatial, IAStar
 		get => _visualizeGrid; 
 		set {
 			_visualizeGrid = value;
-			if (_gridSizeX * _gridSizeY != 0) {
+			if (points != null) {
 				ToggleVisualization();
 			}
 		}
@@ -52,7 +52,7 @@ public class Grid_AStar : Spatial, IAStar
 	private uint collisionMaskBit;
 
 	private readonly DllLoader loader = new DllLoader();
-	private Grid_AStarLinker AStarLinker;
+	private KDTree_AStarLinker AStarLinker;
 	private Timer pathTimer;
 	private PathRequestManager pathRequestManager;
 	private PhysicsDirectSpaceState direct_space;
@@ -61,6 +61,8 @@ public class Grid_AStar : Spatial, IAStar
 	private int _gridSizeX, _gridSizeY;
 	private Vector3 center;
 	private Curve curve;
+
+	private List<float[]> points;
 
 	#endregion Private Parameters
 
@@ -104,7 +106,7 @@ public class Grid_AStar : Spatial, IAStar
 		curve = ResourceLoader.Load<Curve>("res://_Assets/Curve.tres");
 
 		// Get link to AStar dll
-		AStarLinker = loader.GetGridAStarLinker();
+		AStarLinker = loader.GetKDTreeAStarLinker();
 
 		// Initialize path request manager
 		pathRequestManager = new PathRequestManager(AStarLinker, AddNode);
@@ -140,6 +142,7 @@ public class Grid_AStar : Spatial, IAStar
 	public override void _ExitTree()
 	{
 		loader.Destroy();
+		pathRequestManager.Destroy();
 	}
 
 	/// <summary>
@@ -160,18 +163,16 @@ public class Grid_AStar : Spatial, IAStar
 		pathTimer.Connect("timeout", target, method);
 	}
 
-	/// <summary>
-	/// Generates the astar grid map
-	/// </summary>
-	public void GenerateMap()
+	public void GenerateMap() 
 	{
 		var nodeDiameter = nodeRadius * 2;
 		_gridSizeX = Mathf.CeilToInt(region.x / nodeDiameter);
 		_gridSizeY = Mathf.CeilToInt(region.y / nodeDiameter);
 		
-		AStarLinker.setUpGrid(_gridSizeX, _gridSizeY, minMovementPenalty, maxMovementPenalty);
+		AStarLinker.setUpGrid(nodeRadius, minMovementPenalty, maxMovementPenalty);
 
 		Vector3 bottomLeft = center - Vector3.Right * region.x / 2 - Vector3.Forward * region.y / 2;
+		points = new List<float[]>();
 
 		// Check each point in the grid and insert
 		for (int x = 0; x < _gridSizeX; x++)
@@ -181,19 +182,30 @@ public class Grid_AStar : Spatial, IAStar
 				var point = bottomLeft + Vector3.Right * (x * nodeDiameter + nodeRadius) + Vector3.Forward * (y * nodeDiameter + nodeRadius);
 				(var worldPoint, var isWalkable, var movePenalty) = GetSpot(point);
 				worldPoint = worldPoint.Equals(Vector3.Inf) ? point : worldPoint;
-				AStarLinker.addPoint(point, new Vector2(x,y), isWalkable, movePenalty);
+				points.Add(new float[] { point.x, point.y, point.z, isWalkable ? 1 : 0, movePenalty});
 			}
 		}
 
-		// Weight blurring
-		if (blurWeights) {
-			(minMovementPenalty, maxMovementPenalty) = AStarLinker.blurMap(blurSize);
+		// No weight blurring currently supported with kdtree
+
+		if (points.Count < 0) {
+			GD.PrintErr("AStar did not find any pathing instances");
+			return;
 		}
+		AStarLinker.addPoints(points.ToArray().To2D());
 
 		// Visualizing the grid (mainly for testing)
 		if (visualizeGrid) {
-			VisualizeGrid(_gridSizeX, _gridSizeY);
+			VisualizeGrid();
 		}
+	}
+
+	public Vector3 getPoint(Vector3 position) {
+		return AStarLinker.getPoint(position).Item1;
+	}
+
+	public Vector3[] nearestNeighbors(Vector3 position) {
+		return AStarLinker?.getNearNeighbors(position);
 	}
 
 	/// <summary>
@@ -213,7 +225,7 @@ public class Grid_AStar : Spatial, IAStar
 			vis.Visible = !vis.Visible;
 			return;
 		}
-		VisualizeGrid(_gridSizeX, _gridSizeY);
+		VisualizeGrid();
 	}
 
 	/// <summary>
@@ -221,7 +233,7 @@ public class Grid_AStar : Spatial, IAStar
 	/// </summary>
 	/// <param name="_gridSizeX">The width of the grid</param>
 	/// <param name="_gridSizeY">The depth of the grid</param>
-	private void VisualizeGrid(int _gridSizeX, int _gridSizeY) {
+	private void VisualizeGrid() {
 		MultiMeshInstance visualization; // Utilize a multimesh for efficiency
 		visualization = this.Get<MultiMeshInstance>("Debug/visualization");
 		if (visualization == null) {
@@ -246,21 +258,16 @@ public class Grid_AStar : Spatial, IAStar
 		};
 
 		int cnt = 0;
-		for (int x = 0; x < _gridSizeX; x++) {
-			for (int y = 0; y < _gridSizeY; y++) {
-				(var worldPoint, var movePen, var isWalkable) = AStarLinker.getPoint(x, y);
-				float d = ((movePen - minMovementPenalty) / (float)(maxMovementPenalty - minMovementPenalty));
-				var color = new Color(1, 1, 1).LinearInterpolate(new Color(0,0,0), curve.Interpolate(d));
-				color = isWalkable ? new Color(color.r, color.g, color.b, visualAlpha) : new Color(1, 0, 0, visualAlpha);
-				multiMesh.SetInstanceTransform(cnt, new Transform(visualization.Transform.basis, worldPoint + (Vector3.Up * nodeRadius)));
-				multiMesh.SetInstanceColor(cnt, color);
-				cnt++;
-			}
+		foreach(var p in points) {
+			float d = ((p[4] - minMovementPenalty) / (float)(maxMovementPenalty - minMovementPenalty));
+			var color = new Color(1, 1, 1).LinearInterpolate(new Color(0,0,0), curve.Interpolate(d));
+			color = (p[3] == 1) ? new Color(color.r, color.g, color.b, visualAlpha) : new Color(1, 0, 0, visualAlpha);
+			multiMesh.SetInstanceTransform(cnt, new Transform(visualization.Transform.basis, new Vector3(p[0], p[1], p[2]) + (Vector3.Up * nodeRadius)));
+			multiMesh.SetInstanceColor(cnt, color);
+			cnt++;
 		}
 		visualization.Multimesh = multiMesh;
-		if (visualization.GetParentOrNull<Spatial>() == null){
-			GetNode<Spatial>("Debug").AddChild(visualization);
-		}
+		this.Get<Spatial>("Debug").AddChild(visualization);
 	}
 
 	/// <summary>

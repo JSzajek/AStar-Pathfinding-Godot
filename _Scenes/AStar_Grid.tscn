@@ -1,37 +1,21 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://_Scripts/_grid/Grid_AStar.cs" type="Script" id=1]
 [ext_resource path="res://_Assets/GridCanvas.tscn" type="PackedScene" id=2]
-[ext_resource path="res://_Scripts/Viewer.cs" type="Script" id=3]
-[ext_resource path="res://_Assets/Scene.tscn" type="PackedScene" id=4]
+[ext_resource path="res://_Assets/Viewer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://_Assets/GridScene.tscn" type="PackedScene" id=4]
+[ext_resource path="res://_Assets/Target.tscn" type="PackedScene" id=5]
 [ext_resource path="res://_Assets/Enemy.tscn" type="PackedScene" id=6]
-[ext_resource path="res://_Scripts/Entity.cs" type="Script" id=7]
-[ext_resource path="res://_Assets/Marker.tscn" type="PackedScene" id=8]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 18, 0.25, 14 )
-
-[sub_resource type="ProceduralSky" id=2]
-sky_top_color = Color( 0.172549, 0.647059, 0.909804, 1 )
-sky_horizon_color = Color( 0.717647, 0.811765, 0.886275, 1 )
-ground_bottom_color = Color( 0.717647, 0.811765, 0.886275, 1 )
-ground_horizon_color = Color( 0.717647, 0.811765, 0.886275, 1 )
-
-[sub_resource type="Environment" id=3]
-background_mode = 2
-background_sky = SubResource( 2 )
-
-[sub_resource type="BoxShape" id=4]
-extents = Vector3( 0, 0, 0 )
-
-[sub_resource type="CylinderShape" id=5]
-radius = 0.128441
-height = 2.14693
 
 [node name="Main" type="Node"]
 
 [node name="AStar_Linker" type="Spatial" parent="."]
 script = ExtResource( 1 )
+visualizeGrid = true
+visualAlpha = 0.8
 
 [node name="BoundingBox" type="CollisionShape" parent="AStar_Linker"]
 shape = SubResource( 1 )
@@ -47,22 +31,7 @@ light_color = Color( 0.952941, 0.913725, 0.760784, 1 )
 shadow_enabled = true
 shadow_color = Color( 0.45098, 0.427451, 0.34902, 1 )
 
-[node name="Viewer" type="KinematicBody" parent="."]
-transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
-script = ExtResource( 3 )
-
-[node name="Pivot" type="Spatial" parent="Viewer"]
-
-[node name="Swivel" type="Spatial" parent="Viewer/Pivot"]
-transform = Transform( 1, 0, 0, 0, 0.819152, -0.573577, 0, 0.573577, 0.819152, 0, 0, 0 )
-
-[node name="Camera" type="Camera" parent="Viewer/Pivot/Swivel"]
-transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, -20 )
-environment = SubResource( 3 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Viewer"]
-shape = SubResource( 4 )
-disabled = true
+[node name="Viewer" parent="." instance=ExtResource( 3 )]
 
 [node name="Enemies" type="Node" parent="."]
 
@@ -93,18 +62,6 @@ turningDist = 3.0
 stoppingDist = 2.0
 targetPath = "/root/Main/Target"
 
-[node name="Target" type="KinematicBody" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10.911, 0, -0.031981 )
-script = ExtResource( 7 )
-hasBody = false
+[node name="Target" parent="." instance=ExtResource( 5 )]
 
-[node name="Marker" parent="Target" instance=ExtResource( 8 )]
-
-[node name="CollisionShape" type="CollisionShape" parent="Target"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.18661, 0 )
-shape = SubResource( 5 )
-
-[node name="Head" type="Position3D" parent="Target"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0 )
-
-[node name="Scene" parent="." instance=ExtResource( 4 )]
+[node name="GridScene" parent="." instance=ExtResource( 4 )]

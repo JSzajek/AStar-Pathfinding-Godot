@@ -3,27 +3,33 @@ using System;
 using System.Runtime.InteropServices;
 
 /// <summary>
-/// Grid AStarLinker dll class representing an 
+/// KDTree AStarLinker dll class representing an 
 /// library for AStar pathfinding functionality.
 /// </summary>
-public class Grid_AStarLinker : Dll, IAStarLinker {
+public class KDTree_AStarLinker : Dll, IAStarLinker {
 	
 	#region Delegates
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private delegate void setupGrid(int sizeX, int sizeY, int _minPenalty, int _maxPenalty);
+	private delegate void setupGrid(float nodeRadius, int _minPenalty, int _maxPenalty);
 	
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate void addGridPoint(float pointX, float pointY, float pointZ, int gridX, int gridY, bool walkable, int movePenalty);
+	
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate void addGridPoints([In][MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.R4)] float[,] points, int d1, int d2);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private delegate IntPtr getGridPoint(int gridX, int gridY);
+	private delegate IntPtr getGridPoint(float pointX, float pointY, float pointZ);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate IntPtr getNeighbors(float pointX, float pointY, float pointZ);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate IntPtr getPathList(float startX, float startY, float startZ, float endX, float endY, float endZ, bool smooth, float turnDist, float stopDist);
 
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private delegate IntPtr blurWeights(int blurSize);
+	//[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	//private delegate IntPtr blurWeights(int blurSize);
 
 	#endregion Delegates
 
@@ -31,9 +37,11 @@ public class Grid_AStarLinker : Dll, IAStarLinker {
 
 	private setupGrid setup;
 	private addGridPoint add;
+	private addGridPoints addMany;
 	private getGridPoint get;
+	private getNeighbors getNN;
 	private getPathList path;
-	private blurWeights blur;
+	//private blurWeights blur;
 
 	#endregion Private Parameters
 
@@ -42,13 +50,15 @@ public class Grid_AStarLinker : Dll, IAStarLinker {
 	/// </summary>
 	/// <param name="filePath">The file path to the dll</param>
 	/// <returns></returns>
-	public Grid_AStarLinker(string filePath) : base(filePath)
+	public KDTree_AStarLinker(string filePath) : base(filePath)
 	{
 		setup = (setupGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "setup"), typeof(setupGrid));
 		add = (addGridPoint)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "addPoint"), typeof(addGridPoint));
+		addMany = (addGridPoints)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "addPoints"), typeof(addGridPoints));
 		get = (getGridPoint)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "getPoint"), typeof(getGridPoint));
+		getNN = (getNeighbors)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "getNearestNeighbors"), typeof(getNeighbors));
 		path = (getPathList)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "path"), typeof(getPathList));
-		blur = (blurWeights)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "blur"), typeof(blurWeights));
+		//blur = (blurWeights)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "blur"), typeof(blurWeights));
 	}
 
 	/// <summary>
@@ -58,9 +68,9 @@ public class Grid_AStarLinker : Dll, IAStarLinker {
 	/// <param name="sizeY">The depth of the grid space</param>
 	/// <param name="_minPenalty">The minimum movement penalty</param>
 	/// <param name="_maxPenalty">The maximum movement penalty</param>
-	public void setUpGrid(int sizeX, int sizeY, int _minPenalty, int _maxPenalty)
+	public void setUpGrid(float _nodeRadius, int _minPenalty, int _maxPenalty)
 	{
-		setup(sizeX, sizeY, _minPenalty, _maxPenalty);
+		setup(_nodeRadius, _minPenalty, _maxPenalty);
 	}
 
 	/// <summary>
@@ -75,18 +85,43 @@ public class Grid_AStarLinker : Dll, IAStarLinker {
 		add(point.x, point.y, point.z, (int)grid.x, (int)grid.y, walkable, movePenalty);
 	}
 
+	public void addPoints(float[,] points) 
+	{
+		addMany(points, points.GetLength(0), points.GetLength(1));
+	}
+
 	/// <summary>
 	/// Gets a point from the grid
 	/// </summary>
 	/// <param name="gridX">The x coordinate of the grid</param>
 	/// <param name="gridY">The y coordinate of the grid</param>
 	/// <returns>A Tuple representing the grid point of world position movement pentalty and walkablity</returns>
-	public (Vector3, int, bool) getPoint(int gridX, int gridY)
+	public (Vector3, int, bool) getPoint(Vector3  position)
 	{
-		IntPtr  pointPtr = get(gridX, gridY);
+		IntPtr  pointPtr = get(position.x, position.y, position.z);
 		float[] arr = new float[5];
 		Marshal.Copy(pointPtr, arr, 0, 5);
 		return (new Vector3(arr[0], arr[1], arr[2]), (int)arr[3], (int)arr[4] == 1);
+	}
+
+	public Vector3[] getNearNeighbors(Vector3 position) {
+		IntPtr neighborPtr = getNN(position.x, position.y, position.z);
+		float[] sizeArray = new float[1];
+		Marshal.Copy(neighborPtr, sizeArray, 0, 1);
+		int size = (int)sizeArray[0];
+
+		if (size == 1) {
+			return new Vector3[0];
+		}
+
+		float[] points = new float[size];
+		Marshal.Copy(neighborPtr, points, 0, size);
+
+		Vector3[] waypoints = new Vector3[(size-1) / 3];
+		for (int i = 1; i < size; i += 3) {
+			waypoints[i/3] = new Vector3(points[i], points[i + 1], points[i+2]);
+		}
+		return waypoints;
 	}
 
 	/// <summary>
@@ -133,6 +168,7 @@ public class Grid_AStarLinker : Dll, IAStarLinker {
 				}
 				callback(new PathResult(new Path(waypoints), true, request.hash, request.callback));
 			}
+				
 		}
 	}
 
@@ -142,11 +178,11 @@ public class Grid_AStarLinker : Dll, IAStarLinker {
 	/// </summary>
 	/// <param name="blurSize">The window size used to blur the weights</param>
 	/// <returns>A tuple containing the new minimum and maximum movement penalties</returns>
-	public (int, int) blurMap(int blurSize)
-	{
-		var blurPtr = blur(blurSize);
-		int[] returnArray = new int[2];
-		Marshal.Copy(blurPtr, returnArray, 0, 2);
-		return (returnArray[0], returnArray[1]);
-	}
+	// public (int, int) blurMap(int blurSize)
+	// {
+	// 	var blurPtr = blur(blurSize);
+	// 	int[] returnArray = new int[2];
+	// 	Marshal.Copy(blurPtr, returnArray, 0, 2);
+	// 	return (returnArray[0], returnArray[1]);
+	// }
 }

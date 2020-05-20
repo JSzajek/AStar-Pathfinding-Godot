@@ -73,6 +73,7 @@ margin_right = 575.0
 margin_bottom = 128.0
 rect_pivot_offset = Vector2( 29.4329, -57.5291 )
 custom_fonts/font = ExtResource( 2 )
+disabled = true
 text = "    A* Pathfinding with 'Naive' NavMesh"
 align = 0
 __meta__ = {

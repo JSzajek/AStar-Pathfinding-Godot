@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://_Scripts/Canvas.cs" type="Script" id=1]
 [ext_resource path="res://_Gui_Imports/arrow_back_ios-24px.svg" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://_Gui_Imports/right_click.png" type="Texture" id=4]
 [ext_resource path="res://_Gui_Imports/scroll.png" type="Texture" id=5]
 [ext_resource path="res://_Gui_Imports/Normal_Font.res" type="DynamicFont" id=6]
+[ext_resource path="res://_Gui_Imports/Ataro.otf" type="DynamicFontData" id=7]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.482353, 0.482353, 0.482353, 0.376471 )
@@ -29,6 +30,13 @@ corner_radius_bottom_left = 2
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.172549, 0.172549, 0.172549, 1 )
 
+[sub_resource type="DynamicFont" id=5]
+size = 24
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 7 )
+
 [node name="Canvas" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,7 +46,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="astar_panel" type="Panel" parent="."]
+[node name="prop_panel" type="Panel" parent="."]
 margin_top = 75.0
 margin_right = 270.0
 margin_bottom = 295.0
@@ -47,7 +55,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="title" type="Label" parent="astar_panel"]
+[node name="title" type="Label" parent="prop_panel"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -58.0
@@ -59,7 +67,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="astar_toggle" type="Button" parent="astar_panel"]
+[node name="prop_toggle" type="Button" parent="prop_panel"]
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -71,15 +79,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Tween" type="Tween" parent="astar_panel"]
+[node name="Tween" type="Tween" parent="prop_panel"]
 
-[node name="Dummy" type="Button" parent="astar_panel"]
+[node name="Dummy" type="Button" parent="prop_panel"]
 visible = false
 margin_right = 12.0
 margin_bottom = 20.0
 mouse_filter = 2
 
-[node name="Panel" type="Panel" parent="astar_panel"]
+[node name="Panel" type="Panel" parent="prop_panel"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -117.0
@@ -90,7 +98,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="KeyArrows" type="Panel" parent="astar_panel/Panel"]
+[node name="KeyArrows" type="Panel" parent="prop_panel/Panel"]
 margin_left = 10.0
 margin_top = 11.0
 margin_right = 100.0
@@ -100,7 +108,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Up" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+[node name="Up" type="Panel" parent="prop_panel/Panel/KeyArrows"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -9.0
@@ -113,13 +121,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Up"]
+[node name="arrow_back_ios-24px" type="Sprite" parent="prop_panel/Panel/KeyArrows/Up"]
 position = Vector2( 8.5, 12 )
 rotation = 1.57079
 scale = Vector2( 0.65, 0.55 )
 texture = ExtResource( 2 )
 
-[node name="Down" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+[node name="Down" type="Panel" parent="prop_panel/Panel/KeyArrows"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = 11.4728
@@ -133,13 +141,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Down"]
+[node name="arrow_back_ios-24px" type="Sprite" parent="prop_panel/Panel/KeyArrows/Down"]
 position = Vector2( 8.5, 12 )
 rotation = 1.57079
 scale = Vector2( 0.65, 0.55 )
 texture = ExtResource( 2 )
 
-[node name="Right" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+[node name="Right" type="Panel" parent="prop_panel/Panel/KeyArrows"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = 33.3755
@@ -153,13 +161,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Right"]
+[node name="arrow_back_ios-24px" type="Sprite" parent="prop_panel/Panel/KeyArrows/Right"]
 position = Vector2( 8.5, 12 )
 rotation = 1.57079
 scale = Vector2( 0.65, 0.55 )
 texture = ExtResource( 2 )
 
-[node name="Left" type="Panel" parent="astar_panel/Panel/KeyArrows"]
+[node name="Left" type="Panel" parent="prop_panel/Panel/KeyArrows"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -31.7107
@@ -173,13 +181,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="arrow_back_ios-24px" type="Sprite" parent="astar_panel/Panel/KeyArrows/Left"]
+[node name="arrow_back_ios-24px" type="Sprite" parent="prop_panel/Panel/KeyArrows/Left"]
 position = Vector2( 8.5, 12 )
 rotation = 1.57079
 scale = Vector2( 0.65, 0.55 )
 texture = ExtResource( 2 )
 
-[node name="Label3" type="Label" parent="astar_panel/Panel/KeyArrows"]
+[node name="Label3" type="Label" parent="prop_panel/Panel/KeyArrows"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -193,7 +201,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Targeting" type="Panel" parent="astar_panel/Panel"]
+[node name="Targeting" type="Panel" parent="prop_panel/Panel"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = 2.5
@@ -205,7 +213,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label3" type="Label" parent="astar_panel/Panel/Targeting"]
+[node name="Label3" type="Label" parent="prop_panel/Panel/Targeting"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -219,12 +227,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="left_click" type="Sprite" parent="astar_panel/Panel/Targeting"]
+[node name="left_click" type="Sprite" parent="prop_panel/Panel/Targeting"]
 position = Vector2( 42.1136, 27.7168 )
 scale = Vector2( 0.1, 0.1 )
 texture = ExtResource( 3 )
 
-[node name="Rotating" type="Panel" parent="astar_panel/Panel"]
+[node name="Rotating" type="Panel" parent="prop_panel/Panel"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -97.5
@@ -236,7 +244,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label3" type="Label" parent="astar_panel/Panel/Rotating"]
+[node name="Label3" type="Label" parent="prop_panel/Panel/Rotating"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -250,12 +258,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="right_click" type="Sprite" parent="astar_panel/Panel/Rotating"]
+[node name="right_click" type="Sprite" parent="prop_panel/Panel/Rotating"]
 position = Vector2( 42.1136, 27.7168 )
 scale = Vector2( 0.1, 0.1 )
 texture = ExtResource( 4 )
 
-[node name="Scrolling" type="Panel" parent="astar_panel/Panel"]
+[node name="Scrolling" type="Panel" parent="prop_panel/Panel"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = 2.49999
@@ -267,7 +275,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label3" type="Label" parent="astar_panel/Panel/Scrolling"]
+[node name="Label3" type="Label" parent="prop_panel/Panel/Scrolling"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -281,15 +289,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="scroll" type="Sprite" parent="astar_panel/Panel/Scrolling"]
+[node name="scroll" type="Sprite" parent="prop_panel/Panel/Scrolling"]
 position = Vector2( 42.1136, 27.7168 )
 scale = Vector2( 0.1, 0.1 )
 texture = ExtResource( 5 )
 
 [node name="debug_panel" type="Panel" parent="."]
-margin_top = 320.0
+margin_top = 335.0
 margin_right = 270.0
-margin_bottom = 527.0
+margin_bottom = 490.0
 custom_styles/panel = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -333,7 +341,7 @@ anchor_right = 0.5
 margin_left = -117.0
 margin_top = 30.0
 margin_right = 96.0
-margin_bottom = 194.0
+margin_bottom = 140.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -344,9 +352,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -100.0
-margin_top = -76.5
+margin_top = -47.5
 margin_right = 100.0
-margin_bottom = 76.5
+margin_bottom = 47.5
 custom_styles/panel = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -368,6 +376,18 @@ text = "< Back"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="pressed" from="astar_panel/astar_toggle" to="." method="_on_astar_toggle_pressed"]
+
+[node name="fps" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -85.0001
+margin_bottom = 35.0
+custom_fonts/font = SubResource( 5 )
+text = "FPS: "
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="prop_panel/prop_toggle" to="." method="_on_prop_toggle_pressed"]
 [connection signal="pressed" from="debug_panel/debug_toggle" to="." method="_on_debug_toggle_pressed"]
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

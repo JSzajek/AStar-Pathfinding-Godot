@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://_Scripts/Viewer.cs" type="Script" id=1]
+
+[sub_resource type="ProceduralSky" id=1]
+sky_top_color = Color( 0.172549, 0.647059, 0.909804, 1 )
+sky_horizon_color = Color( 0.717647, 0.811765, 0.886275, 1 )
+ground_bottom_color = Color( 0.717647, 0.811765, 0.886275, 1 )
+ground_horizon_color = Color( 0.717647, 0.811765, 0.886275, 1 )
+
+[sub_resource type="Environment" id=2]
+background_mode = 2
+background_sky = SubResource( 1 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 0, 0, 0 )
+
+[node name="Viewer" type="KinematicBody"]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
+script = ExtResource( 1 )
+
+[node name="Pivot" type="Spatial" parent="."]
+
+[node name="Swivel" type="Spatial" parent="Pivot"]
+transform = Transform( 1, 0, 0, 0, 0.819152, -0.573577, 0, 0.573577, 0.819152, 0, 0, 0 )
+
+[node name="Camera" type="Camera" parent="Pivot/Swivel"]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, -20 )
+environment = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 3 )
+disabled = true

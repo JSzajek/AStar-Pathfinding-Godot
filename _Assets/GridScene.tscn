@@ -6,7 +6,7 @@
 [ext_resource path="res://_Assets/Path.tscn" type="PackedScene" id=4]
 [ext_resource path="res://_Assets/Rock.tscn" type="PackedScene" id=5]
 
-[node name="Scene" type="Spatial"]
+[node name="GridScene" type="Spatial"]
 
 [node name="Sand Pit" type="Spatial" parent="."]
 
@@ -113,56 +113,59 @@ transform = Transform( -0.362347, 0, -1.21707, 0, 0.6, 0, 1.3523, 0, -0.326112, 
 [node name="Rock3" parent="Rock Piles" instance=ExtResource( 5 )]
 transform = Transform( -0.247488, 0, -0.78905, 0, 0.454112, 0, 0.923637, 0, -0.211425, -3.08695, 0.288939, -8.43015 )
 
-[node name="Path" parent="." instance=ExtResource( 4 )]
+[node name="Paths" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0 )
+
+[node name="Path" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -9.18989, 0.116366, 4.41985 )
 
-[node name="Path7" parent="." instance=ExtResource( 4 )]
+[node name="Path7" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.5, 0, 0.351624, 0, 1, 0, -0.866025, 0, 0.20301, -6.24107, 0.116366, 7.01169 )
 
-[node name="Path13" parent="." instance=ExtResource( 4 )]
+[node name="Path13" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -4.37114e-08, 0, 1.46888, 0, 1, 0, -1, 0, -6.42066e-08, -1.26127, 0.116366, 7.50706 )
 
-[node name="Path14" parent="." instance=ExtResource( 4 )]
+[node name="Path14" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.5, 0, 0.455601, 0, 1, 0, -0.866025, 0, 0.263041, 4.02027, 0.116367, 8.076 )
 
-[node name="Path15" parent="." instance=ExtResource( 4 )]
+[node name="Path15" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.866025, 0, 0.263041, 0, 1, 0, -0.5, 0, 0.455601, 5.79441, 0.116366, 9.83102 )
 
-[node name="Path16" parent="." instance=ExtResource( 4 )]
+[node name="Path16" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 2.35744e-08, 0, 1, 0, -5.96046e-08, 0, 0.395514, 6.48577, 0.116365, 11.8786 )
 
-[node name="Path6" parent="." instance=ExtResource( 4 )]
+[node name="Path6" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.116366, 0 )
 
-[node name="Path2" parent="." instance=ExtResource( 4 )]
+[node name="Path2" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.932954, 0, -0.359997, 0, 1, 0, 0.359997, 0, 0.932954, -10.0367, 0.116366, -5.31182 )
 
-[node name="Path3" parent="." instance=ExtResource( 4 )]
+[node name="Path3" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.747536, 0, -0.308017, 0, 1, 0, 0.560165, 0, 0.411046, -8.25499, 0.116366, -8.95286 )
 
-[node name="Path4" parent="." instance=ExtResource( 4 )]
+[node name="Path4" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.358523, -0.0792579, -0.350213, 0, 0.996063, -0.0348633, 0.715517, 0.0397136, 0.17548, -6.72494, 0.198871, -10.3783 )
 
-[node name="Path5" parent="." instance=ExtResource( 4 )]
+[node name="Path5" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -0.0758838, -0.447996, -0.597992, 0.0701858, 0.88288, -0.30898, 0.681592, -0.14079, -0.0347598, -4.57153, 1.08099, -10.6898 )
 
-[node name="Path8" parent="." instance=ExtResource( 4 )]
+[node name="Path8" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -0.397921, -0.265814, -0.480702, 0.00574826, 0.949491, -0.184662, 0.667006, -0.166762, -0.285184, 1.90758, 3.74304, -9.47724 )
 
-[node name="Path11" parent="." instance=ExtResource( 4 )]
+[node name="Path11" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -0.0906174, -0.267467, -0.320863, 0.0854032, 0.951103, -0.0952151, 0.682705, -0.15448, -0.0306781, -0.114966, 3.02191, -10.3593 )
 
-[node name="Path12" parent="." instance=ExtResource( 4 )]
+[node name="Path12" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -0.0925196, -0.378925, -0.307787, 0.0732882, 0.913329, -0.132182, 0.683857, -0.149146, -0.027475, -1.97902, 2.34106, -10.5331 )
 
-[node name="Path9" parent="." instance=ExtResource( 4 )]
+[node name="Path9" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -0.532942, -0.226656, -0.163439, -0.0378661, 0.962412, -0.0631723, 0.563747, -0.149626, -0.158751, 3.63861, 4.42115, -8.24205 )
 
-[node name="Path10" parent="." instance=ExtResource( 4 )]
+[node name="Path10" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( -0.531077, -0.110357, -0.17055, -0.0198254, 0.99151, -0.0301461, 0.566423, -0.0687664, -0.160963, 4.57772, 4.68918, -7.34238 )
 
-[node name="Path17" parent="." instance=ExtResource( 4 )]
+[node name="Path17" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.730864, -0.0294942, -0.203993, 0.00583423, 0.999387, -0.00938336, 0.835364, 0.0188249, 0.17854, 5.74152, 4.7788, -6.09294 )
 
-[node name="Path18" parent="." instance=ExtResource( 4 )]
+[node name="Path18" parent="Paths" instance=ExtResource( 4 )]
 transform = Transform( 0.521418, -0.0294942, -0.239326, -0.00306896, 0.999387, -0.00946138, 0.979869, 0.0188249, 0.127323, 6.76385, 4.77969, -4.53822 )

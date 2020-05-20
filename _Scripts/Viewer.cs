@@ -30,10 +30,10 @@ public class Viewer : KinematicBody
     public override void _Ready() {
         spaceState = GetWorld().DirectSpaceState;
         canvas = this.Get<Canvas>("/root/Main/Canvas/Canvas");
-        pivot = GetNode<Spatial>("Pivot");
-        swivel = GetNode<Spatial>("Pivot/Swivel");
-        camera = GetNode<Camera>("Pivot/Swivel/Camera");
-        target = GetNode<Spatial>("/root/Main/Target");
+        pivot = this.Get<Spatial>("Pivot");
+        swivel = this.Get<Spatial>("Pivot/Swivel");
+        camera = this.Get<Camera>("Pivot/Swivel/Camera");
+        target = this.Get<Spatial>("/root/Main/Target");
     }
 
     /// <summary>

@@ -19,12 +19,11 @@ public class DllLoader : Node
     // Loaded Libraries dictionary
     private Dictionary<LibType, string> dllPaths {get;} = new Dictionary<LibType, string>()
     {
-        {LibType.GRID_ASTAR, dllDirPath + "Grid_AstarBinding.dll"}
+        {LibType.GRID_ASTAR, dllDirPath + "Grid_AstarBinding.dll"},
+        {LibType.KDTREE_ASTAR, dllDirPath + "KDTree_AstarBinding.dll"}
     };
 
     private Dictionary<LibType, Dll> dllLib;
-
-    private Resource temp;
 
     /// <summary>
     /// Constructor for dllLoader initializing the libraries and file
@@ -106,16 +105,28 @@ public class DllLoader : Node
                 output = new Grid_AStarLinker(dllPaths[LibType.GRID_ASTAR]); 
                 dllLib.Add(LibType.GRID_ASTAR, output);
                 return output;
+            case LibType.KDTREE_ASTAR:
+                output = new KDTree_AStarLinker(dllPaths[LibType.KDTREE_ASTAR]);
+                dllLib.Add(LibType.KDTREE_ASTAR, output);
+                return output;
         }
         return null; // Should never happen
     }
 
     /// <summary>
-    /// Getter method to get an Grid AStar Linker library dll
+    /// Getter method to get an Grid AStar Linker library
     /// </summary>
-    /// <returns>An Grid AStarLinker dll</returns>
-    public Grid_AStarLinker GetAStarLinker()
+    /// <returns>A Grid AStarLinker</returns>
+    public Grid_AStarLinker GetGridAStarLinker()
     {
         return Load(LibType.GRID_ASTAR) as Grid_AStarLinker;
+    }
+
+    /// <summary>
+    /// Getter method to get an KDTree Astar Linker library
+    /// </summary>
+    /// <returns>A KDTree AStarLinker</returns>
+    public KDTree_AStarLinker GetKDTreeAStarLinker() {
+        return Load(LibType.KDTREE_ASTAR) as KDTree_AStarLinker;
     }
 }
