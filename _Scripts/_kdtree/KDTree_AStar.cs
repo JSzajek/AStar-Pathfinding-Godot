@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Godot.Collections;
 
 /// <summary>
-/// Class representing AStar pathfinding and generating
+/// Class representing KDTree AStar pathfinding and generating
 /// the corresponding grid map
 /// </summary>
 public class KDTree_AStar : Spatial, IAStar 
@@ -200,10 +200,21 @@ public class KDTree_AStar : Spatial, IAStar
 		}
 	}
 
+    /// <summary>
+    /// Testing method to retrieve a point from the kdtree 'grid'
+    /// </summary>
+    /// <param name="position">The desired position</param>
+    /// <returns>The closest position within the kdtree</returns>
 	public Vector3 getPoint(Vector3 position) {
 		return AStarLinker.getPoint(position).Item1;
 	}
 
+    /// <summary>
+    /// Testing method to retrieve the closest neighbors of the passed point
+    /// from the kdtree 'grid'
+    /// </summary>
+    /// <param name="position">The desired target point</param>
+    /// <returns>The nearest neighbors within the kdtree</returns>
 	public Vector3[] nearestNeighbors(Vector3 position) {
 		return AStarLinker?.getNearNeighbors(position);
 	}

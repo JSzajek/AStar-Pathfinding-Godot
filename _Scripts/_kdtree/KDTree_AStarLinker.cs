@@ -85,6 +85,10 @@ public class KDTree_AStarLinker : Dll, IAStarLinker {
 		add(point.x, point.y, point.z, (int)grid.x, (int)grid.y, walkable, movePenalty);
 	}
 
+	/// <summary>
+	/// Adds a list of points to the grid.
+	/// </summary>
+	/// <param name="points">The points to be added</param>
 	public void addPoints(float[,] points) 
 	{
 		addMany(points, points.GetLength(0), points.GetLength(1));
@@ -104,6 +108,11 @@ public class KDTree_AStarLinker : Dll, IAStarLinker {
 		return (new Vector3(arr[0], arr[1], arr[2]), (int)arr[3], (int)arr[4] == 1);
 	}
 
+	/// <summary>
+	/// Testing method of nearest neighbors.
+	/// </summary>
+	/// <param name="position">The target point</param>
+	/// <returns>The nearest neighbors of the target point</returns>
 	public Vector3[] getNearNeighbors(Vector3 position) {
 		IntPtr neighborPtr = getNN(position.x, position.y, position.z);
 		float[] sizeArray = new float[1];
@@ -168,21 +177,6 @@ public class KDTree_AStarLinker : Dll, IAStarLinker {
 				}
 				callback(new PathResult(new Path(waypoints), true, request.hash, request.callback));
 			}
-				
 		}
 	}
-
-	/// <summary>
-	/// Blurs the weights of the grid map to represent smoother
-	/// transition based on the passed blur size.
-	/// </summary>
-	/// <param name="blurSize">The window size used to blur the weights</param>
-	/// <returns>A tuple containing the new minimum and maximum movement penalties</returns>
-	// public (int, int) blurMap(int blurSize)
-	// {
-	// 	var blurPtr = blur(blurSize);
-	// 	int[] returnArray = new int[2];
-	// 	Marshal.Copy(blurPtr, returnArray, 0, 2);
-	// 	return (returnArray[0], returnArray[1]);
-	// }
 }

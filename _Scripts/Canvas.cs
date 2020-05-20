@@ -11,11 +11,16 @@ public class Canvas : Control
 	private Tween propTween, debugTween;
 	private Label fps;
 
-
+	/// <summary>
+	/// Constructor loading in the main menu scene for backwards scene navigation
+	/// </summary>
 	public Canvas() {
 		mainMenu = ResourceLoader.Load<PackedScene>("res://_Scenes/MainMenu.tscn");
 	}
 
+	/// <summary>
+	/// Back button capture method
+	/// </summary>
 	public void _on_back_button_pressed() {
 		GetTree().ChangeSceneTo(mainMenu);
 	}
@@ -43,9 +48,9 @@ public class Canvas : Control
 	}
 
 	/// <summary>
-	/// On pressed toggle button capture method
+	/// On pressed prop toggle button capture method
 	/// </summary>
-	public void _on_astar_toggle_pressed() {
+	public void _on_prop_toggle_pressed() {
 		if (propTween.IsActive()) {
 			return;
 		}
@@ -56,6 +61,9 @@ public class Canvas : Control
 		propTween.Start();
 	}
 
+	/// <summary>
+	/// On pressed debug toggle button capture method
+	/// </summary>
 	public void _on_debug_toggle_pressed() {
 		if (debugTween.IsActive()) {
 			return;

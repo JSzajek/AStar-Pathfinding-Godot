@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://_Assets/Grass.tscn" type="PackedScene" id=1]
 [ext_resource path="res://_Assets/Path.tscn" type="PackedScene" id=2]
 [ext_resource path="res://_Assets/Rock.tscn" type="PackedScene" id=3]
 [ext_resource path="res://_Assets/Sand.tscn" type="PackedScene" id=4]
-[ext_resource path="res://_Scripts/Grouping.cs" type="Script" id=5]
 
 [node name="KDTreeScene" type="Spatial"]
 
@@ -12,7 +11,6 @@
 
 [node name="Grass" parent="Ground" instance=ExtResource( 1 )]
 transform = Transform( 18, 0, 0, 0, 0.2, 0, 0, 0, 12.5, 0, 0, 0 )
-script = ExtResource( 5 )
 
 [node name="Path" type="Spatial" parent="."]
 
@@ -91,8 +89,6 @@ transform = Transform( -0.331494, 0, 0.799276, 0, 0.73669, 0, -0.610688, 0, -0.4
 
 [node name="Sand" parent="Sand" instance=ExtResource( 4 )]
 transform = Transform( 2.27705, 0, 0.447156, 0, 0.2, 0, -0.441541, 0, 2.30601, -8.6045, 0.0152497, 4.64098 )
-script = ExtResource( 5 )
 
 [node name="Sand2" parent="Sand" instance=ExtResource( 4 )]
 transform = Transform( 1.65722, 0, 0.204893, 0, 0.2, 0, -0.32135, 0, 1.05664, -6.88378, 0.0152497, 6.53806 )
-script = ExtResource( 5 )

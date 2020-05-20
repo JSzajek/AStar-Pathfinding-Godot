@@ -1,5 +1,8 @@
 using Godot;
 
+/// <summary>
+/// Canvas class for kdtree astar
+/// </summary>
 public class KDTreeCanvas : Control
 {
     private KDTree_AStar aStar;
@@ -8,6 +11,9 @@ public class KDTreeCanvas : Control
     private Tween visualizeTween;
     private float initialX;
 
+    /// <summary>
+    /// Initializes Parameters
+    /// </summary>
     public override void _Ready()
 	{
 		visualizePanel = this.Get<Panel>("visualize_panel");
@@ -32,6 +38,9 @@ public class KDTreeCanvas : Control
 		visualizeTween.Start();
 	}
 
+    /// <summary>
+    /// On pressed visualization for astar kdtree
+    /// </summary>
     public void _on_visualize_grid_pressed() {
         if (aStar != null) {
             aStar.visualizeGrid = !aStar.visualizeGrid;

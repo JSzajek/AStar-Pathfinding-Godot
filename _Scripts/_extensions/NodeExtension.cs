@@ -7,10 +7,10 @@ using System.Collections.Generic;
 public static class NodeExtension {
 
     /// <summary>
-    /// Extended GetNodeOrNull method to quietly attempt to grab
+    /// Extended GetNode method to quietly attempt to grab
     /// node or indicate otherwise.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The return object type</typeparam>
     public static T Get<T>(this Node obj, string path) where T : class {
         if (obj.HasNode(path)) {
             return obj.GetNode<T>(path);
@@ -21,6 +21,11 @@ public static class NodeExtension {
         }
     }
 
+    /// <summary>
+    /// Extended Get method to get the first child of the node
+    /// of the passed type
+    /// </summary>
+    /// <typeparam name="T">The return object type</typeparam>
     public static T GetFirstChild<T>(this Node obj) where T : class {
         var children = obj.GetChildren();
         foreach(var child in children) {
@@ -31,6 +36,11 @@ public static class NodeExtension {
         return null;
     }
 
+    /// <summary>
+    /// Extended GetChildren method getting all of the children
+    /// of the passed starting from the node.
+    /// </summary>
+    /// <typeparam name="T">The return object type</typeparam>
     public static List<T> GetChildren<T>(this Node obj) where T : class {
         var results = new List<T>();
         var children = obj.GetChildren();

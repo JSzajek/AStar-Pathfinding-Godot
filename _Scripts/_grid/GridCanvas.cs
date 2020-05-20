@@ -1,5 +1,8 @@
 using Godot;
 
+/// <summary>
+/// Canvas class for grid astar
+/// </summary>
 public class GridCanvas : Control
 {
     private Grid_AStar aStar;
@@ -8,6 +11,9 @@ public class GridCanvas : Control
     private Tween visualizeTween;
     private float initialX;
 
+    /// <summary>
+    /// Initializing parameters
+    /// </summary>
     public override void _Ready()
 	{
 		visualizePanel = this.Get<Panel>("visualize_panel");
@@ -32,6 +38,9 @@ public class GridCanvas : Control
 		visualizeTween.Start();
 	}
 
+    /// <summary>
+    /// On pressed visualization for astar grid
+    /// </summary>
     public void _on_visualize_grid_pressed() {
         if (aStar != null) {
             aStar.visualizeGrid = !aStar.visualizeGrid;
