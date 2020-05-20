@@ -60,7 +60,7 @@ margin_left = -85.0
 margin_top = -15.0
 margin_right = 95.0
 margin_bottom = 15.0
-text = "visualize grid"
+text = "hide grid"
 __meta__ = {
 "_edit_use_anchors_": false
 }

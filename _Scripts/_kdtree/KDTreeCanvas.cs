@@ -44,7 +44,7 @@ public class KDTreeCanvas : Control
     public void _on_visualize_grid_pressed() {
         if (aStar != null) {
             aStar.visualizeGrid = !aStar.visualizeGrid;
-            visualizeGrid.Text = aStar.visualizeGrid ? "hide grid" : "visualize grid";
+            visualizeGrid.Text = aStar.visualizeGrid ? "hide grid" : "show grid";
         }
     }
 }

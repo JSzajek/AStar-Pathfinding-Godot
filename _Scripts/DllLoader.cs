@@ -20,7 +20,8 @@ public class DllLoader : Node
     private Dictionary<LibType, string> dllPaths {get;} = new Dictionary<LibType, string>()
     {
         {LibType.GRID_ASTAR, dllDirPath + "Grid_AstarBinding.dll"},
-        {LibType.KDTREE_ASTAR, dllDirPath + "KDTree_AstarBinding.dll"}
+        {LibType.KDTREE_ASTAR, dllDirPath + "KDTree_AstarBinding.dll"},
+        {LibType.NAVMESH_ASTAR, dllDirPath + "NavmeshBinding.dll"}
     };
 
     private Dictionary<LibType, Dll> dllLib;
@@ -109,6 +110,10 @@ public class DllLoader : Node
                 output = new KDTree_AStarLinker(dllPaths[LibType.KDTREE_ASTAR]);
                 dllLib.Add(LibType.KDTREE_ASTAR, output);
                 return output;
+            case LibType.NAVMESH_ASTAR:
+                output = new Navmesh_AStarLinker(dllPaths[LibType.NAVMESH_ASTAR]);
+                dllLib.Add(LibType.KDTREE_ASTAR, output);
+                return output;
         }
         return null; // Should never happen
     }
@@ -128,5 +133,13 @@ public class DllLoader : Node
     /// <returns>A KDTree AStarLinker</returns>
     public KDTree_AStarLinker GetKDTreeAStarLinker() {
         return Load(LibType.KDTREE_ASTAR) as KDTree_AStarLinker;
+    }
+
+    /// <summary>
+    /// Getter method to get an Navmesh Astar Linker library
+    /// </summary>
+    /// <returns>A Navmesh AStarLinker</returns>
+    public Navmesh_AStarLinker GetNavmeshAStarLinker() {
+        return Load(LibType.NAVMESH_ASTAR) as Navmesh_AStarLinker;
     }
 }

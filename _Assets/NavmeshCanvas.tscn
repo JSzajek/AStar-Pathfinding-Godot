@@ -1,12 +1,17 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://_Assets/BaseCanvas.tscn" type="PackedScene" id=1]
 [ext_resource path="res://_Gui_Imports/Title_Font.res" type="DynamicFont" id=2]
+[ext_resource path="res://_Scripts/_navmesh/NavmeshCanvas.cs" type="Script" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.482353, 0.482353, 0.482353, 0.376471 )
 
 [node name="Canvas" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -22,3 +27,56 @@ margin_right = 176.0
 margin_bottom = 87.0
 custom_fonts/font = ExtResource( 2 )
 text = "A* 'naive' Navmesh"
+
+[node name="visualize_panel" type="Panel" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -249.0
+margin_top = 55.0
+margin_right = 1.0
+margin_bottom = 180.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="visualize_toggle" type="Button" parent="visualize_panel"]
+anchor_bottom = 1.0
+margin_right = 12.0
+text = ">"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="visualize_grid" type="Button" parent="visualize_panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -85.0
+margin_top = -37.5
+margin_right = 95.0
+margin_bottom = -7.49998
+text = "hide triangles"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="visualize_network" type="Button" parent="visualize_panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -85.0
+margin_top = 11.0
+margin_right = 95.0
+margin_bottom = 41.0
+text = "hide network"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="visualize_panel"]
+[connection signal="pressed" from="visualize_panel/visualize_toggle" to="." method="_on_visualize_toggle_pressed"]
+[connection signal="pressed" from="visualize_panel/visualize_grid" to="." method="_on_visualize_grid_pressed"]
+[connection signal="pressed" from="visualize_panel/visualize_network" to="." method="_on_visualize_network_pressed"]
