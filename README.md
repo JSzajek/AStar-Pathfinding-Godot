@@ -41,7 +41,7 @@ the pathfinding algorithm.
 This implementation utilizes a basic 2 dimensional grid of path nodes to perform A* pathfinding. This attempt was
 heavily based on this [tutorial](https://www.youtube.com/playlist?list=PLFt_AvWsXl0cq5Umv3pMC9SPnKjfp9eGW).
 
-![alt text](/Pathing_Example.png)
+![alt text](/AStar_Grid_Example.png)
 
 #### AStar with KDTree ####
 This implementation utilizes a K-Dimensional Tree ([more information here](https://en.wikipedia.org/wiki/K-d_tree)).
@@ -51,7 +51,7 @@ represents an average search time of O(logn) as well as removal of the same time
 recompiling the grid within the previous approach. But mostly this attempt was an attempt at getting easily layered
 astar pathfinding without the need to implement complex 3 dimensional arrays.
 
--- Insert Example Image here
+![alt text](/AStar_KDTree_Example.png)
 
 ##### Issues #####
 This implementation also presented significant issues. From my initial testing I believe it is due to the nature of 
@@ -60,8 +60,16 @@ quick research it seems that KD trees don't always offer the ability to gather t
 required for astar. Thus resulting in missing or enlongated routes. Nonetheless more testing is required - 
 which may be unnecessary given the performance of the next implementation.
 
-Nearest Neighbors Issue:
--- Insert Example Image here
+##### Nearest Neighbors Issue: #####
+![alt text](/KDTree_Issue.gif)
+
+As seen with the above gif, the red cube representing the nearest point to the clicked point and the 
+blue cubes representing the nearest neighbors to that point (within a radius search of the node diameters).
+It achieves great results until we reach a partition zone, which leads to a dead zone. Resulting in 
+enlongated paths show below:
+
+![alt text](/AStar_KDTree_Issue.png)
+
 
 #### Navmesh Implementation ####
 To be added
