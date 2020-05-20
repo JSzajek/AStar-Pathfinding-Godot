@@ -3,7 +3,13 @@ An AStar Pathfinding implementation in Godot game engine.
 
 This is an rework of the [previous attempt](https://gitlab.com/jszajek/astar-godot) at 3d path finding within the Godot game engine - Version 3.2. 
 It utilizes C# over gdscript along with loaded C++ libraries containing AStar pathfinding algorithm. In attempts
-to bring a more performant 3d path finding in the Godot game engine.
+to bring a more performant 3d path finding in the Godot game engine. Furthermore, the compiled dlls have been made in such
+a way that they can be utilized in other game engines as well (eg. Unity).
+
+
+**Disclaimer:** All implementations refernce their relevent sources. As well as none of these implementations claim to be the
+most efficent implementation - probably more efficent implementations within the engine. 
+But these implementations are done in an exercise to learn about the involved algorithms. 
 
 ### Capabilities / Advantages: ###
 * Naive Binary Heap - to increase path-node comparison efficiency
@@ -16,7 +22,8 @@ to bring a more performant 3d path finding in the Godot game engine.
 ### Task List: ###
 - [x] Fix path smoothing
 - [ ] Add layered map support (under and over - eg. rock cliff in current scene)
-- [ ] Add naive form of 'navmeshs' (simplified quadrants to speed up path finding)
+- [x] Add naive form of 'navmeshs' ~~(simplified quadrants to speed up path finding)~~
+- [ ] Add weighting into navmesh pathfinding
 - [ ] Fix stuck on empty path bug
 - [x] Increased favoring for weights
 - [x] Fix slowdown after close distance
@@ -26,13 +33,13 @@ to bring a more performant 3d path finding in the Godot game engine.
 - [ ] Implement Path Request results caching and relavent storing
 
 #### Detailed Description ####
-The loaded scene represents three enemies or seekers that will follow the red flag.
+The implementations scenes represents three enemies or seekers that will follow the red flag.
 Clicking the scene will move the flag, causing them to follow. Thereby, exemplifying
 the pathfinding algorithm.
 
 #### Included ####
 * Primary Scripts, Assets, Imports, Scenes
-* Built Executable Project ([here](/_Build/Build_1.0/))
+* Built Executable Project ([here](/_Build/Build_1.2/))
 
 
 ### Pathfinding Implementations ###
@@ -72,8 +79,11 @@ enlongated paths show below:
 
 
 #### Navmesh Implementation ####
-To be added
+This is an early implementation of a navmesh (triangulation still has problems). But it reduces the amount of checks
+within the pathfinding - thus finding efficent paths along the vertices, midpoints, and centriods of a triangulated
+polygon depicted in red, blue, and green respectively. There still needs to be path simplifing and weighting within
+the graph to produce better paths.
 
-
+![alt text](/AStar_Navmesh_Example.png)
 
 
