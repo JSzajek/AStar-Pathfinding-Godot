@@ -7,3 +7,5 @@ astarlinker_debug.txt
 project.godot
 default_env.tres
 export_presets.cfg
+*.import
+*.txt

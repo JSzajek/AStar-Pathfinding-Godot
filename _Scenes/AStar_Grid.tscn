@@ -14,6 +14,7 @@ extents = Vector3( 18, 0.25, 14 )
 
 [node name="AStar_Linker" type="Spatial" parent="."]
 script = ExtResource( 1 )
+blurWeights = true
 visualizeGrid = true
 visualAlpha = 0.8
 
