@@ -1,7 +1,7 @@
 # AStar Implementation-Godot #
 An AStar Pathfinding implementations in Godot game engine.
 
-This is an rework of the [previous attempt](https://gitlab.com/jszajek/astar-godot) at 3d path finding within the Godot game engine - Version 3.2. 
+This is an rework of the [previous attempt](https://gitlab.com/jszajek/astar-godot) at 3d path finding within the Godot game engine - Version 3.2 mono. 
 It utilizes C# over gdscript along with loaded C++ libraries containing AStar pathfinding algorithm. In attempts
 to bring a more performant 3d path finding in the Godot game engine. Furthermore, the compiled dlls have been made in such
 a way that they can be utilized in other game engines as well (eg. Unity).
