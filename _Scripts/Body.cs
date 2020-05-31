@@ -23,8 +23,8 @@ public class Body : Spatial
 		if (targetBasis.GetEuler().y - GetGlobalForwardLookAt().GetEuler().y + Mathf.Deg2Rad(headOffsetAngle) < 0) {
 			targetBasis = GetGlobalForwardLookAt();
 		}
-		var targetQuat = head.GlobalTransform.basis.Quat().Normalized().Slerp(targetBasis.Quat(), 0.1f);
-		head.GlobalTransform = new Transform(new Basis(targetQuat), head.GlobalTransform.origin);
+		//var targetQuat = head.GlobalTransform.basis.Quat().Normalized().Slerp(targetBasis.Quat(), 0.1f);
+		//head.GlobalTransform = new Transform(new Basis(targetQuat), head.GlobalTransform.origin);
 	}
 
 	private Basis GetGlobalForwardLookAt() {

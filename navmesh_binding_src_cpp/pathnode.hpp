@@ -9,7 +9,7 @@ using namespace std;
 
 namespace astar
 {
-	class PathNode : public Node<PathNode>
+	class PathNode : public TNode<PathNode>
 	{
 	private:
 		PathNode* parent = NULL;
@@ -18,6 +18,7 @@ namespace astar
 		int movementPenalty = 0;
 	public:
 		size_t hash;
+		PathNode();
 		PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty);
 		PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty, int axis);
 		PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty, int axis, PathNode* left, PathNode* right);

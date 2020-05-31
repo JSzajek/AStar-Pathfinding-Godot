@@ -1,8 +1,8 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://_Materials/Green.material" type="Material" id=1]
 [ext_resource path="res://_Materials/Grey.material" type="Material" id=2]
-[ext_resource path="res://_Assets/Path.tscn" type="PackedScene" id=3]
+[ext_resource path="res://_Materials/Brown.material" type="Material" id=3]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -14,10 +14,12 @@ data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1
 [sub_resource type="ConcavePolygonShape" id=4]
 data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1 )
 
+[sub_resource type="CubeMesh" id=5]
+
 [node name="NavmeshScene" type="Spatial"]
 
 [node name="Ground" type="MeshInstance" parent="."]
-transform = Transform( 18, 0, 0, 0, 0.2, 0, 0, 0, 12, 0, 0, 0 )
+transform = Transform( 12, 0, 0, 0, 0.2, 0, 0, 0, 12, -12, 0, 0 )
 mesh = SubResource( 1 )
 material/0 = ExtResource( 1 )
 
@@ -27,8 +29,19 @@ collision_layer = 80
 [node name="CollisionShape" type="CollisionShape" parent="Ground/StaticBody"]
 shape = SubResource( 2 )
 
+[node name="Ground2" type="MeshInstance" parent="."]
+transform = Transform( 12, 0, 0, 0, 0.2, 0, 0, 0, 12, 12, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = ExtResource( 1 )
+
+[node name="StaticBody" type="StaticBody" parent="Ground2"]
+collision_layer = 80
+
+[node name="CollisionShape" type="CollisionShape" parent="Ground2/StaticBody"]
+shape = SubResource( 2 )
+
 [node name="Rock" type="MeshInstance" parent="."]
-transform = Transform( 2.89674, 0, 0, 0, 2.45671, 0, 0, 0, 2.74893, 16.1311, 2.08471, -9.87695 )
+transform = Transform( 2.89674, 0, 0, 0, 2.45671, 0, 0, 0, 2.74893, 18.3513, 2.08471, -9.74762 )
 mesh = SubResource( 3 )
 material/0 = ExtResource( 2 )
 
@@ -39,7 +52,7 @@ collision_layer = 32
 shape = SubResource( 4 )
 
 [node name="Rock4" type="MeshInstance" parent="."]
-transform = Transform( 2.89674, 0, 0, 0, 2.45671, 0, 0, 0, 2.74893, 9.85708, 2.08471, 4.67227 )
+transform = Transform( 2.89674, 0, 0, 0, 2.45671, 0, 0, 0, 2.74893, -18.9761, 2.08471, -5.25728 )
 mesh = SubResource( 3 )
 material/0 = ExtResource( 2 )
 
@@ -49,8 +62,19 @@ collision_layer = 32
 [node name="CollisionShape" type="CollisionShape" parent="Rock4/StaticBody"]
 shape = SubResource( 4 )
 
+[node name="Rock5" type="MeshInstance" parent="."]
+transform = Transform( 2.89674, 0, 0, 0, 2.45671, 0, 0, 0, 2.74893, 22.0725, 2.08471, 9.66176 )
+mesh = SubResource( 3 )
+material/0 = ExtResource( 2 )
+
+[node name="StaticBody" type="StaticBody" parent="Rock5"]
+collision_layer = 32
+
+[node name="CollisionShape" type="CollisionShape" parent="Rock5/StaticBody"]
+shape = SubResource( 4 )
+
 [node name="Rock2" type="MeshInstance" parent="."]
-transform = Transform( 1.4135, 0, 0, 0, 2.45671, 0, 0, 0, 3.46552, -6.82177, 2.08471, 3.09834 )
+transform = Transform( 1.4135, 0, 0, 0, 2.45671, 0, 0, 0, 7.16796, -7.33248, 2.08471, 5.38755 )
 mesh = SubResource( 3 )
 material/0 = ExtResource( 2 )
 
@@ -61,7 +85,7 @@ collision_layer = 32
 shape = SubResource( 4 )
 
 [node name="Rock3" type="MeshInstance" parent="."]
-transform = Transform( 1.4135, 0, 0, 0, 2.45671, 0, 0, 0, 3.46552, 0.178228, 2.08471, -0.988326 )
+transform = Transform( 1.4135, 0, 0, 0, 2.45671, 0, 0, 0, 7.96864, 3.55579, 2.08471, -4.2542 )
 mesh = SubResource( 3 )
 material/0 = ExtResource( 2 )
 
@@ -73,32 +97,77 @@ shape = SubResource( 4 )
 
 [node name="Paths" type="Spatial" parent="."]
 
-[node name="Path" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( 1.94112, 0, 0, 0, 1, 0, 0, 0, 1.79336, -12.8836, 0.0891502, 6.65719 )
+[node name="Path" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.69457, 0, 0, 0, 0.125, 0, 0, 0, 3.85612, -13.1615, 0.099104, 8.18372 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path2" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( 1.7361, 0, -0.532319, 0, 1, 0, 0.868274, 0, 1.06436, -11.6612, 0.0891507, -0.908929 )
+[node name="Path2" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.62315, 0, -1.10765, 0, 0.125, 0, 0.486753, 0, 3.69361, -12.1626, 0.0991045, 1.10928 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path3" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( 0.555366, 0, -1.14031, 0, 1, 0, 1.85997, 0, 0.340482, -7.9641, 0.0891511, -4.12795 )
+[node name="Path3" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.18296, 0, -1.35253, 0, 0.125, 0, 1.21333, 0, 1.31868, -10.1122, 0.0991045, -3.27321 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path4" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( -1.9213, 0, -0.169592, 0, 1, 0, 0.276625, 0, -1.17791, -3.5958, 0.0891502, -3.58924 )
+[node name="Path4" type="MeshInstance" parent="Paths"]
+transform = Transform( -0.0214748, 0, -1.88883, 0, 0.125, 0, 1.69443, 0, -0.0239386, -8.10114, 0.0991045, -4.14231 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path5" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( -1.94112, 0, -0.000207587, 0, 1, 0, 0.000338599, 0, -1.19005, -3.13054, 0.0891502, 3.04961 )
+[node name="Path5" type="MeshInstance" parent="Paths"]
+transform = Transform( -0.819631, 0, -2.73681, 0, 0.125, 0, 1.48316, 0, -1.51243, -4.2352, 0.0991045, -2.96345 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path6" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( -1.13857, 0, -0.643832, 0, 1, 0, 1.57213, 0, -0.466279, -1.96994, 0.0891521, 6.5128 )
+[node name="Path6" type="MeshInstance" parent="Paths"]
+transform = Transform( -1.63665, 0, -0.810563, 0, 0.125, 0, 0.439269, 0, -3.02003, -1.44107, 0.0991045, 0.501578 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path7" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( 0.50894, 0, -1.26543, 0, 1, 0, 1.87321, 0, 0.343811, 2.11125, 0.0891531, 6.55413 )
+[node name="Path7" type="MeshInstance" parent="Paths"]
+transform = Transform( -1.4995, 0, -0.825971, 0, 0.125, 0, 0.789353, 0, -1.56906, -0.0881014, 0.0991045, 4.73751 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path8" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( 1.9411, 0, 0.00457748, 0, 1, 0, -0.006776, 0, 1.3113, 4.48531, 0.0891531, 3.42565 )
+[node name="Path8" type="MeshInstance" parent="Paths"]
+transform = Transform( -0.86467, 0, -1.52497, 0, 0.125, 0, 1.45736, 0, -0.904782, 1.6176, 0.0991045, 6.60502 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path9" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( 1.13286, 0, -1.06483, 0, 1, 0, 1.57625, 0, 0.765296, 6.77813, 0.0891531, -1.17221 )
+[node name="Path9" type="MeshInstance" parent="Paths"]
+transform = Transform( 0.322523, 0, -2.34404, 0, 0.125, 0, 1.66359, 0, 0.454441, 4.29378, 0.0991035, 6.91482 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
 
-[node name="Path10" parent="Paths" instance=ExtResource( 3 )]
-transform = Transform( -0.313525, 0, -1.55291, 0, 1, 0, 1.91563, 0, -0.25416, 13.263, 0.0891531, -2.27481 )
+[node name="Path10" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.3252, 0, -1.4881, 0, 0.125, 0, 1.05612, 0, 1.86724, 7.06477, 0.0991035, 5.26587 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
+
+[node name="Path11" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.69188, 0, -0.134537, 0, 0.125, 0, 0.0954827, 0, 2.38389, 8.31275, 0.0991035, 2.18483 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
+
+[node name="Path12" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.69188, 0, -0.134537, 0, 0.125, 0, 0.0954827, 0, 2.38389, 8.31275, 0.0991035, 2.18483 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
+
+[node name="Path13" type="MeshInstance" parent="Paths"]
+transform = Transform( 1.12882, 0, -1.7808, 0, 0.125, 0, 1.26385, 0, 1.59053, 9.59013, 0.0991035, -0.692943 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
+
+[node name="Path14" type="MeshInstance" parent="Paths"]
+transform = Transform( 0.345661, 0, -2.33748, 0, 0.125, 0, 1.65894, 0, 0.487043, 13.015, 0.0991035, -2.39257 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )
+
+[node name="Path15" type="MeshInstance" parent="Paths"]
+transform = Transform( 0.141618, 0, -4.54964, 0, 0.125, 0, 1.68864, 0, 0.381554, 19.6532, 0.0991035, -3.1689 )
+mesh = SubResource( 5 )
+material/0 = ExtResource( 3 )

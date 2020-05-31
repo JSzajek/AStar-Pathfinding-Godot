@@ -3,7 +3,7 @@
 #include "navmeshlinker.hpp"
 #include <tuple>
 
-using namespace navmeshlinker;
+using namespace navmesh;
 using namespace std;
 
 // Initialize the native class.
@@ -24,20 +24,48 @@ void setup()
 	NavmeshLinker::setupGrid();
 }
 
-// Adds the passed point into the kdtree
-void addPoint(float pointX, float pointY, float pointZ)
+// Starts the creation of a navmesh
+void startMesh(float* vertices, int d1) 
 {
-	NavmeshLinker::addGridPoint(Vector3(pointX, pointY, pointZ));
+	vector<Vector3> verts;
+	for (int i = 0; i < d1; i++) {
+		verts.push_back(Vector3(vertices[(i * 3) + 0], vertices[(i * 3) + 1], vertices[(i * 3) + 2]));
+	}
+	NavmeshLinker::startMesh(verts);
 }
 
-// Adds the points structured in an float array into the kdtree
-void addPoints(float* points, int d1, int d2)
+// Clips a edge polygon from the current navmesh
+void clipEdge(float* vertices, int d1) 
 {
-	NavmeshLinker::addGridPoints(points, d1, d2);
+	vector<Vector3> verts;
+	for (int i = 0; i < d1; i++) {
+		verts.push_back(Vector3(vertices[(i * 3) + 0], vertices[(i * 3) + 1], vertices[(i * 3) + 2]));
+	}
+	NavmeshLinker::clipEdge(verts);
 }
 
-// Gets the point closest to the passed point
-float* getPoint(float pointX, float pointY, float pointZ)
+// Clips a hole polygon from the current navmesh
+void clipHole(float* vertices, int d1) 
 {
-	return NavmeshLinker::getGridPoint(Vector3(pointX, pointY, pointZ));
+	vector<Vector3> verts;
+	for (int i = 0; i < d1; i++) {
+		verts.push_back(Vector3(vertices[(i * 3) + 0], vertices[(i * 3) + 1], vertices[(i * 3) + 2]));
+	}
+	NavmeshLinker::clipHole(verts);
+}
+
+// Gets the debug triangles from the navmesh at the passed index
+float* getDebugMesh(int index) {
+	return NavmeshLinker::getDebugMesh(index);
+}
+
+// Finishes the current navmesh, by triangulation and storing in navmesh dictionary
+void endMesh() {
+	NavmeshLinker::endMesh();
+}
+
+// Gets the shortest path from the start coordinate to the end coordinate
+float* getPath(float startX, float startY, float startZ, float endX, float endY, float endZ)
+{
+	return NavmeshLinker::getPath(Vector3(startX, startY, startZ), Vector3(endX, endY, endZ));
 }

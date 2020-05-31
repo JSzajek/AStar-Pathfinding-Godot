@@ -8,8 +8,8 @@ using System;
 /// </summary>
 public static class MeshInstanceExtension {
 
-	public static List<(Vector3, bool, int)> GetPoints(this MeshInstance instance) {
-		return null;
+	public static float GetSurfaceHeight(this MeshInstance instance) {
+		return instance.GetTransformedAabb().GetEndpoint(2).y;
 	}
 
 	public static Vector3[] GetTopCorners(this MeshInstance instance, float adjust = 0f) {
@@ -19,16 +19,30 @@ public static class MeshInstanceExtension {
 			return markers.Select(pos => pos.GlobalTransform.origin).ToArray();
 		}
 
-		var aabb = instance.GetAabb();
-		var scale = instance.Scale;
-		var theta = instance.Rotation.y;
+		var aabb = instance.GetTransformedAabb();
 		var center = instance.GlobalTransform.origin;
+		var theta = instance.Rotation.y;
 		return new Vector3[] {
-			((aabb.GetEndpoint(2) + new Vector3(-adjust, 0, -adjust)) * scale).RotateAround(center, theta),
-			((aabb.GetEndpoint(6) + new Vector3(adjust, 0, -adjust)) * scale).RotateAround(center, theta),
-			((aabb.GetEndpoint(7) + new Vector3(adjust, 0, adjust)) * scale).RotateAround(center, theta),
-			((aabb.GetEndpoint(3) + new Vector3(-adjust, 0, adjust)) * scale).RotateAround(center, theta),
+			(aabb.GetEndpoint(2) - new Vector3(adjust, 0, adjust)).RotateAround(center, theta),
+			(aabb.GetEndpoint(6) - new Vector3(-adjust, 0, adjust)).RotateAround(center, theta),
+			(aabb.GetEndpoint(7) - new Vector3(-adjust, 0, -adjust)).RotateAround(center, theta),
+			(aabb.GetEndpoint(3) - new Vector3(adjust, 0, -adjust)).RotateAround(center, theta)
 		};
+	}
+
+	/// <summary>
+	/// Retrieves the top corners constrained in the y axis by the passed value.
+	/// </summary>
+	/// <param name="instance">The meshinstance</param>
+	/// <param name="heightConstraint">The constrained y value</param>
+	/// <param name="adjust">The adjusting padding value</param>
+	/// <returns></returns>
+	public static Vector3[] GetTopCornersConstrained(this MeshInstance instance, float heightConstraint, float adjust = 0f) {
+		var corners = GetTopCorners(instance, adjust);
+		for (int i = 0; i < corners.Length; i++) {
+			corners[i] = new Vector3(corners[i].x, heightConstraint, corners[i].z);
+		}
+		return corners;
 	}
 
 	/// <summary>
@@ -39,7 +53,7 @@ public static class MeshInstanceExtension {
 	/// <param name="theta">The amount of rotation to apply</param>
 	/// <returns>Rotated Vector3</returns>
 	private static Vector3 RotateAround(this Vector3 vec, Vector3 center, float theta) {
-		return vec.Rotated(Vector3.Up, theta) + center;
+		return (vec-center).Rotated(Vector3.Up, theta) + center;
 	}
 
 	// TODO: Move to own extension class

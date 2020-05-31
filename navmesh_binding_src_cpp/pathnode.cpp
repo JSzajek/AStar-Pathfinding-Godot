@@ -7,6 +7,10 @@
 using namespace std;
 using namespace astar;
 
+PathNode::PathNode() {
+
+}
+
 /// <summary>
 /// Initializes a new instance of PathNode
 /// </summary>
@@ -21,7 +25,7 @@ PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty)
 	this->axis = 0;
 	this->left = NULL;
 	this->right = NULL;
-	this->hash = std::hash<string>()(this->position.ToString());
+	this->hash = std::hash<float>()(position.x) ^ std::hash<float>()(position.y) << 2 ^ std::hash<float>()(position.z) >> 2;
 }
 
 /// <summary>

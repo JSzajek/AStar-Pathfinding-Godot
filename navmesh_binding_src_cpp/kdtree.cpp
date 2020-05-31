@@ -43,13 +43,15 @@ KDTree::~KDTree() {
 
 // Recursive Helper method that clears all the children of the node
 void KDTree::clearChild(PathNode* node) {
-	if (node->left != NULL) {
-		clearChild(node->left);
+	if (node != NULL) {
+		if (node->left != NULL) {
+			clearChild(node->left);
+		}
+		else if (node->right != NULL) {
+			clearChild(node->right);
+		}
+		delete node;
 	}
-	else if (node->right != NULL) {
-		clearChild(node->right);
-	}
-	delete node;
 }
 
 // Clears the tree
@@ -92,6 +94,10 @@ vector<PathNode*> KDTree::Nearest(Vector3 position, float radius)
 		nearest(root, position, radius, list);
 	}
 	return list;
+}
+
+PathNode* KDTree::AddNode(PathNode node) {
+	return AddNode(make_tuple(node.position, node.getWalkable(), node.getMovementPenalty()));
 }
 
 // Adds the passed point to the tree

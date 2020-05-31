@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 /// <summary>
-/// KDTree AStarLinker dll class representing an 
+/// Navmesh AStarLinker dll class representing an 
 /// library for AStar pathfinding functionality.
 /// </summary>
 public class Navmesh_AStarLinker : Dll, IAStarLinker {
@@ -13,25 +13,36 @@ public class Navmesh_AStarLinker : Dll, IAStarLinker {
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate void setupGrid();
-	
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private delegate void addGridPoint(float pointX, float pointY, float pointZ);
-	
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private delegate void addGridPoints([In][MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.R4)] float[,] points, int d1, int d2);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private delegate IntPtr getGridPoint(float pointX, float pointY, float pointZ);
+	private delegate void startMesh([In][MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.R4)] float[,] points, int d1);
 
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate void clipEdge([In][MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.R4)] float[,] points, int d1);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate void clipHole([In][MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.R4)] float[,] points, int d1);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate IntPtr getDebugMesh(int index);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate void endMesh();
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate IntPtr findPath(float startX, float startY, float startZ, float endX, float endY, float endZ);
+	
 	#endregion Delegates
 
 	#region  Private Parameters
 
 	private setupGrid setup;
-	private addGridPoint add;
-	private addGridPoints addMany;
-	private getGridPoint get;
-    private BiDirectionalSearch<Vector3> graph;
+	private startMesh start;
+	private clipEdge clipEdgePoly;
+	private clipHole clipHolePoly;
+	private getDebugMesh debugMesh;
+	private endMesh end;
+	private findPath path;
 
 	#endregion Private Parameters
 
@@ -43,58 +54,89 @@ public class Navmesh_AStarLinker : Dll, IAStarLinker {
 	public Navmesh_AStarLinker(string filePath) : base(filePath)
 	{
 		setup = (setupGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "setup"), typeof(setupGrid));
-		add = (addGridPoint)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "addPoint"), typeof(addGridPoint));
-		addMany = (addGridPoints)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "addPoints"), typeof(addGridPoints));
-		get = (getGridPoint)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "getPoint"), typeof(getGridPoint));
+		start = (startMesh)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "startMesh"), typeof(startMesh));
+		clipEdgePoly = (clipEdge)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "clipEdge"), typeof(clipEdge));
+		clipHolePoly = (clipHole)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "clipHole"), typeof(clipHole));
+		debugMesh = (getDebugMesh)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "getDebugMesh"), typeof(getDebugMesh));
+		end = (endMesh)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "endMesh"), typeof(endMesh));
+		path = (findPath)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "getPath"), typeof(findPath));
 	}
 
 	/// <summary>
 	/// Set up grid method
 	/// </summary>
-	public void setUpGrid(IEnumerable<Vector3> points, IEnumerable<Tuple<Vector3, Vector3>> edges)
+	public void setUpGrid()
 	{
-        graph = new BiDirectionalSearch<Vector3>(points, edges);
-        var data = new List<float[]>();
-        foreach(var vec in points) {
-            data.Add(new float[5] { vec.x, vec.y, vec.z, 1, 0});
-        }
 		setup();
-        addPoints(data.ToArray().To2D());
 	}
 
 	/// <summary>
-	/// Adds a point to the grid at a specific position
+	/// Starts the creation of a navigation mesh with passed edge vertices
 	/// </summary>
-	/// <param name="point">The point to add</param>
-	/// <param name="grid">The position in the grid to add the point</param>
-	/// <param name="walkable">Whether the point is walkable</param>
-	/// <param name="movePenalty">The movement penalty of the point</param>
-	public void addPoint(Vector3 point)
-	{
-		add(point.x, point.y, point.z);
+	/// <param name="vertices">The edge vertices of the new navmesh</param>
+	public void startNavMesh(List<Vector3> vertices) {
+		List<float[]> verts = new List<float[]>();
+		foreach (var v in vertices) {
+			verts.Add(new [] {v.x, v.y, v.z});
+		}
+		start(verts.ToArray().To2D(), vertices.Count);
 	}
 
 	/// <summary>
-	/// Adds a list of points to the grid.
+	/// Clips an edge polygon from the current navmesh
 	/// </summary>
-	/// <param name="points">The points to be added</param>
-	public void addPoints(float[,] points) 
-	{
-		addMany(points, points.GetLength(0), points.GetLength(1));
+	/// <param name="vertices">The edgevertices of the edge polygon</param>
+	public void clipEdgePolygon(List<Vector3> vertices) {
+		List<float[]> verts = new List<float[]>();
+		foreach (var v in vertices) {
+			verts.Add(new [] {v.x, v.y, v.z});
+		}
+		clipEdgePoly(verts.ToArray().To2D(), vertices.Count);
 	}
 
 	/// <summary>
-	/// Gets a point from the grid
+	/// Clips an hole polygon from the current navmesh
 	/// </summary>
-	/// <param name="gridX">The x coordinate of the grid</param>
-	/// <param name="gridY">The y coordinate of the grid</param>
-	/// <returns>A Tuple representing the grid point of world position movement pentalty and walkablity</returns>
-	public (Vector3, int, bool) getPoint(Vector3  position)
-	{
-		IntPtr  pointPtr = get(position.x, position.y, position.z);
-		float[] arr = new float[5];
-		Marshal.Copy(pointPtr, arr, 0, 5);
-		return (new Vector3(arr[0], arr[1], arr[2]), (int)arr[3], (int)arr[4] == 1);
+	/// <param name="vertices">The edgevertices of the hole polygon</param>
+	public void clipHolePolygon(List<Vector3> vertices) {
+		List<float[]> verts = new List<float[]>();
+		foreach (var v in vertices) {
+			verts.Add(new [] {v.x, v.y, v.z});
+		}
+		clipHolePoly(verts.ToArray().To2D(), vertices.Count);
+	}
+
+	/// <summary>
+	/// Gets the debug triangles from the navmesh stored at the passed index
+	/// </summary>
+	/// <param name="index">The index of the desired navmesh</param>
+	/// <returns>The triangles of the navmesh</returns>
+	public Triangle[] getDebug(int index = 0) {
+		IntPtr pathPtr = debugMesh(index);
+
+		float[] sizeArray = new float[1];
+		Marshal.Copy(pathPtr, sizeArray, 0, 1);
+		int size = (int)sizeArray[0];
+
+		
+		float[] points = new float[size];
+		Marshal.Copy(pathPtr, points, 0, size);
+
+		Triangle[] triangles = new Triangle[(size-1) / 9];
+		for (int i = 1; i < size; i += 9) {
+			var A = new Vector3(points[i], points[i + 1], points[i + 2]);
+			var B = new Vector3(points[i + 3], points[i + 4], points[i + 5]);
+			var C = new Vector3(points[i + 6], points[i + 7], points[i + 8]);
+			triangles[i/9] = new Triangle(new Vertex(A, 0), new Vertex(B, 1), new Vertex(C, 2));
+		}
+		return triangles;
+	}
+
+	/// <summary>
+	/// Endes the creation navmesh and triggers cleanup and triangulation
+	/// </summary>
+	public void endNavMesh() {
+		end();
 	}
 
 	/// <summary>
@@ -105,16 +147,33 @@ public class Navmesh_AStarLinker : Dll, IAStarLinker {
 	/// <param name="callback">The callback to return the result to</param>
 	public void getPath(PathRequest request, Action<PathResult> callback)
 	{
-		lock(graph) {
-            var startPoint = getPoint(request.pathStart).Item1;
-            var endPoint = getPoint(request.pathEnd).Item1;
-           
-            List<Vector3> waypoints = new List<Vector3>(graph.ShortestPath(startPoint, endPoint));
-            waypoints[0] = request.pathStart;
-		    waypoints[waypoints.Count - 1] = request.pathEnd;
+		lock(path) {
+			(var start, var end) = (request.pathStart, request.pathEnd);
+			IntPtr pathPtr = path(start.x, start.y, start.z, end.x, end.y, end.z);
+		
+			float[] sizeArray = new float[1];
+			Marshal.Copy(pathPtr, sizeArray, 0, 1);
+			int size = (int)sizeArray[0];
 
+			if (size <= 1)
+			{
+				// TODO: Fix Empty Path Bug -- requester becomes stuck on an unwalkable node
+				callback(new PathResult(null, false, request.hash, request.callback));
+				return;
+			}
+			
+			float[] points = new float[size];
+			Marshal.Copy(pathPtr, points, 0, size);
 
-			callback(new PathResult(new Path(waypoints.ToArray()), true, request.hash, request.callback));
+			Vector3[] waypoints = new Vector3[(size-1) / 3];
+			for (int i = 1; i < size; i += 3) {
+				waypoints[i/3] = new Vector3(points[i], points[i + 1], points[i + 2]);
+			}
+
+			waypoints[0] = request.pathStart;
+			waypoints[waypoints.Length - 1] = request.pathEnd;
+
+			callback(new PathResult(new Path(waypoints), true, request.hash, request.callback));
 		}
 	}
 }

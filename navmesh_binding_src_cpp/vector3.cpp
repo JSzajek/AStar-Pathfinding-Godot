@@ -75,6 +75,19 @@ Vector3& Vector3::operator*(float scalar)
 }
 
 /// <summary>
+/// Scalar Division operator
+/// </summary>
+/// <param name="scalar">The scalar to divide by</param>
+/// <returns></returns>
+Vector3& Vector3::operator/(float scalar)
+{
+	if (scalar == 0) {
+		return *new Vector3(INFINITY, INFINITY, INFINITY);
+	}
+	return *new Vector3(this->x / scalar, this->y / scalar, this->z / scalar);
+}
+
+/// <summary>
 /// Gets the Eucledian Distance to the Vector3
 /// </summary>
 /// <param vec>The vector to</param>
@@ -98,6 +111,15 @@ float Vector3::ManhattenDistanceTo(Vector3 vec)
 float Vector3::Magnitude()
 {
 	return sqrtf(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
+}
+
+/// <summary>
+/// Gets the Sqr Magnitude with the implication that
+/// the vector is confined to 2d space
+/// </summary>
+float Vector3::SqrMagnitude2D() 
+{
+	return (this->x * this->x) + (this->z * this->z);
 }
 
 /// <summary>
@@ -137,6 +159,55 @@ float Vector3::DirectionTo(Vector3 vec)
 bool Vector3::Equals(Vector3 vec)
 {
 	return abs(this->x - vec.x) < FLT_EPSILON && abs(this->y - vec.y) < FLT_EPSILON && abs(this->z - vec.z) < FLT_EPSILON;
+}
+
+/// <summary>
+/// Equality of the Vector3
+/// </summary>
+/// <param vec>the vector to be evaluted</param>
+bool Vector3::operator==(Vector3 vec)
+{
+	return Equals(vec);
+}
+
+/// <summary>
+/// Constant equality operator for Vector3
+/// </summary>
+/// <param name="vec">The vector to be evaluated</param>
+bool Vector3::operator==(const Vector3& vec) const
+{
+	return abs(this->x - vec.x) < FLT_EPSILON && abs(this->y - vec.y) < FLT_EPSILON && abs(this->z - vec.z) < FLT_EPSILON;
+}
+
+/// <summary>
+/// The compressed summation operator, adding the passed
+/// vector3.
+/// </summary>
+/// <param name="vec">The vector to be added</param>
+Vector3& Vector3::operator+=(Vector3 vec)
+{
+	this->x += vec.x;
+	this->y += vec.y;
+	this->z += vec.z;
+	return *this;
+}
+
+/// <summary>
+/// Less than operator for Vector3
+/// </summary>
+/// <param name="vec">The vector to be evaluted</param>
+bool Vector3::operator<(const Vector3& vec) const
+{
+	return sqrtf(powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2)) < sqrtf(powf(vec.x, 2) + powf(vec.y, 2) + powf(vec.z, 2));
+}
+
+/// <summary>
+/// Greater than operator for Vector3
+/// </summary>
+/// <param name="vec">The vector to be evaluted</param>
+bool Vector3::operator>(const Vector3& vec) const
+{
+	return sqrtf(powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2)) > sqrtf(powf(vec.x, 2) + powf(vec.y, 2) + powf(vec.z, 2));
 }
 
 /// <summary>

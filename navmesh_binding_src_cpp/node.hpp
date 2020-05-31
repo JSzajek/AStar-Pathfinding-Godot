@@ -8,7 +8,7 @@ using namespace std;
 
 // Class representing a node
 template <class T>
-class Node : public Indexable
+class TNode : public Indexable
 {
 public:
 	Vector3 position;
@@ -17,20 +17,20 @@ public:
 	T* right;
 
 	// Comparison method
-	int CompareTo(Node other) {
+	int CompareTo(TNode other) {
 		return position[axis] - other.position[other.axis];
 	}
 
 	// Initializes a new instance of Node
-	Node() : axis(0), position(Vector3(0, 0, 0)), left(NULL), right(NULL) { }
+	TNode() : axis(0), position(Vector3(0, 0, 0)), left(NULL), right(NULL) { }
 
 	// Initializes a new instance of Node
-	Node(int axis, Vector3 position) :
+	TNode(int axis, Vector3 position) :
 		axis(axis), position(position), left(NULL), right(NULL) {
 	}
 
 	// Initializes a new instance of Node
-	Node(int axis, Vector3 position, T* left, T* right) :
+	TNode(int axis, Vector3 position, T* left, T* right) :
 		axis(axis), position(position), left(left), right(right) {
 	}
 

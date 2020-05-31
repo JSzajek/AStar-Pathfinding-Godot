@@ -30,7 +30,7 @@ shadow_color = Color( 0.45098, 0.427451, 0.34902, 1 )
 [node name="Enemies" type="Node" parent="."]
 
 [node name="Enemy" parent="Enemies" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4568, 1, 8.53505 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4825, 1, -8.24451 )
 moveSpeed = 3.0
 turningSpeed = 0.5
 turningDist = 3.0
@@ -38,7 +38,7 @@ stoppingDist = 2.0
 targetPath = "/root/Main/Target"
 
 [node name="Enemy2" parent="Enemies" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15.3481, 1, -2.69833 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4126, 1, 10.7433 )
 moveSpeed = 3.0
 turningSpeed = 0.5
 turningDist = 3.0
@@ -46,7 +46,7 @@ stoppingDist = 2.0
 targetPath = "/root/Main/Target"
 
 [node name="Enemy3" parent="Enemies" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2842, 1, -7.94435 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 21.795, 0.999999, -3.28899 )
 moveSpeed = 3.0
 turningSpeed = 0.5
 turningDist = 3.0

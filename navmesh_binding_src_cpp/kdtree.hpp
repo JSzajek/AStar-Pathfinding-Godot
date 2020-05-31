@@ -58,6 +58,7 @@ namespace astar
 		PathNode* Nearest(Vector3 position);
 		PathNode* Nearest(Vector3 position, float* distance);
 		vector<PathNode*> Nearest(Vector3 position, float radius);
+		PathNode* AddNode(PathNode node);
 		PathNode* AddNode(tuple<Vector3, bool, int> vals);
 		void RemoveNode(Vector3 position);
 
