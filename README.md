@@ -26,15 +26,17 @@ Image utilized for background in menu screen can be found [here](https://www.cli
 - [ ] Fix Memory leaks in dlls
 - [ ] Add layered map support (under and over - eg. rock cliff in grid scene)
 - [x] Add naive form of 'navmeshs' ~~(simplified quadrants to speed up path finding)~~
-- [ ] Add weighting into navmesh pathfinding
-- [ ] Fix stuck on empty path bug
+- [x] Add weighting into navmesh pathfinding
+- [ ] Add predefined paths favoring within navmeshes
+- [ ] Fix corner cutting within navmesh pathfinding
+- [ ] Fix stuck on empty path bug (solved with navmesh?)
 - [ ] Look into adding boids behavior ([outlined here](https://cs.stanford.edu/people/eroberts/courses/soco/projects/2008-09/modeling-natural-systems/boids.html))
 - [x] Increased favoring for weights
 - [x] Fix slowdown after close distance
 - [x] Move path following into seperate script
 - [x] Add Additional Environments (accomplished with other implementations?)
 - [ ] Implement Jump Point Search w/ weights
-- [ ] Implement Path Request results caching and relavent storing
+- [x] ~~Implement Path Request results caching and relavent storing~~ (irrelevant or not worth the performance cost?)
 
 #### Detailed Description ####
 The implementations scenes represents three enemies or seekers that will follow the red flag.
