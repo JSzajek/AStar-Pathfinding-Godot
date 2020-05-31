@@ -112,7 +112,7 @@ public class DllLoader : Node
                 return output;
             case LibType.NAVMESH_ASTAR:
                 output = new Navmesh_AStarLinker(dllPaths[LibType.NAVMESH_ASTAR]);
-                dllLib.Add(LibType.KDTREE_ASTAR, output);
+                dllLib.Add(LibType.NAVMESH_ASTAR, output);
                 return output;
         }
         return null; // Should never happen
