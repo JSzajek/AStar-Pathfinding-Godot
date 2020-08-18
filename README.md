@@ -24,6 +24,7 @@ Image utilized for background in menu screen can be found [here](https://www.cli
 ### Task List: ###
 - [x] Fix path smoothing
 - [ ] Fix Memory leaks in dlls
+- [ ] Implement logging system
 - [ ] Add layered map support (under and over - eg. rock cliff in grid scene)
 - [x] Add naive form of 'navmeshs' ~~(simplified quadrants to speed up path finding)~~
 - [x] Add weighting into navmesh pathfinding
@@ -45,7 +46,7 @@ the pathfinding algorithm.
 
 #### Included ####
 * Primary Scripts, Assets, Imports, Scenes
-* Built Executable Project ([here](/_Build/Build_1.3/))
+* Built Executable Project ([here](/_Build/Build_1.4/))
 
 
 ### Pathfinding Implementations ###
