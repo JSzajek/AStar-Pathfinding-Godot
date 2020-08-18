@@ -1,11 +1,11 @@
 .vscode/
-.mono/
 .import/
-AStar Pathing.csproj
+.mono/metadata/
+.mono/temp/
 AStar Pathing.sln
 astarlinker_debug.txt
 project.godot
 default_env.tres
 export_presets.cfg
 *.import
-*.txt
+.vs/Architect Game/v16/TestStore/

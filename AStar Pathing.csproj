@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Tools</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8D5162BF-4D0A-4760-9F65-08DD10220BB6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <OutputPath>.mono\temp\bin\$(Configuration)</OutputPath>
+    <RootNamespace>AStarPathing</RootNamespace>
+    <AssemblyName>AStar Pathing</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <GodotProjectGeneratorVersion>1.0.7333.3918</GodotProjectGeneratorVersion>
+    <BaseIntermediateOutputPath>.mono\temp\obj</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(Configuration)</IntermediateOutputPath>
+    <ApiConfiguration Condition=" '$(Configuration)' != 'Release' ">Debug</ApiConfiguration>
+    <ApiConfiguration Condition=" '$(Configuration)' == 'Release' ">Release</ApiConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>$(GodotDefineConstants);GODOT;DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>portable</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>$(GodotDefineConstants);GODOT;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Tools|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>$(GodotDefineConstants);GODOT;DEBUG;TOOLS;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GodotSharp">
+      <Private>False</Private>
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GodotSharpEditor" Condition=" '$(Configuration)' == 'Tools' ">
+      <Private>False</Private>
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharpEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="_Scripts\Canvas.cs" />
+    <Compile Include="_Scripts\GridCanvas.cs" />
+    <Compile Include="_Scripts\KDTreeCanvas.cs" />
+    <Compile Include="_Scripts\NavmeshCanvas.cs" />
+    <Compile Include="_Scripts\EnemyController.cs" />
+    <Compile Include="_Scripts\MainMenuCanvas.cs" />
+    <Compile Include="_Scripts\Body.cs" />
+    <Compile Include="_Scripts\EntityController.cs" />
+    <Compile Include="_Scripts\Entity.cs" />
+    <Compile Include="_Scripts\Viewer.cs" />
+    <Compile Include="_Scripts\Ground.cs" />
+    <Compile Include="_Scripts\SceneController.cs" />
+    <Compile Include="_Scripts\PreloadableScene.cs" />
+    <Compile Include="_Scripts\Chunk.cs" />
+    <Compile Include="_Scripts\VisibleEntity.cs" />
+    <Compile Include="_Scripts\Navigator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="_Scripts\_extensions\MeshInstanceExtension.cs" />
+    <Compile Include="_Scripts\_extensions\NodeExtension.cs" />
+    <Compile Include="_Scripts\_extensions\AABBExtension.cs" />
+    <Compile Include="_Scripts\_extensions\MultidimensionalArrayExtension.cs" />
+    <Compile Include="_Scripts\_extensions\Vector3Extension.cs" />
+    <Compile Include="_Scripts\_extensions\Vector2Extension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="_Scripts\_system\BinaryFile.cs" />
+    <Compile Include="_Scripts\_system\BuildEnvironment.cs" />
+    <Compile Include="_Scripts\_system\Dll.cs" />
+    <Compile Include="_Scripts\_system\DllLoader.cs" />
+    <Compile Include="_Scripts\_system\FileSystem.cs" />
+    <Compile Include="_Scripts\_system\NativeMethods.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="_Scripts\_interfaces\IWaitable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="_Scripts\_astar\TerrainType.cs" />
+    <Compile Include="_Scripts\_astar\IAStar.cs" />
+    <Compile Include="_Scripts\_astar\IAStarLinker.cs" />
+    <Compile Include="_Scripts\_astar\BaseAStar.cs" />
+    <Compile Include="_Scripts\_astar\GridAStar.cs" />
+    <Compile Include="_Scripts\_astar\GridAStarLinker.cs" />
+    <Compile Include="_Scripts\_astar\KDTreeAStar.cs" />
+    <Compile Include="_Scripts\_astar\KDTreeAStarLinker.cs" />
+    <Compile Include="_Scripts\_astar\NavmeshAStar.cs" />
+    <Compile Include="_Scripts\_astar\NavmeshAStarLinker.cs" />
+    <Compile Include="_Scripts\_astar\Line.cs" />
+    <Compile Include="_Scripts\_astar\_triangulation\Triangle.cs" />
+    <Compile Include="_Scripts\_astar\_triangulation\Vertex.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="_Scripts\_pathing\Path.cs" />
+    <Compile Include="_Scripts\_pathing\PathRequest.cs" />
+    <Compile Include="_Scripts\_pathing\PathRequestManager.cs" />
+    <Compile Include="_Scripts\_pathing\PathResult.cs" />
+    <Compile Include="_Scripts\_pathing\SmoothPath.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
