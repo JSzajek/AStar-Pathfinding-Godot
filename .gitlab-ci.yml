@@ -1,0 +1,14 @@
+image: mono:latest
+
+stages:
+    - build
+    - test
+
+variables:
+    solution: "Architect Game.sln"
+    test: "Architect Game.Test"
+
+build:
+    stage: build
+    script:
+        - msbuild /t:restore
