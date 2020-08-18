@@ -5,7 +5,6 @@ using Godot;
 /// </summary>
 public class Canvas : Control
 {
-	private PackedScene mainMenu;
 	private Panel propPanel, debugPanel;
 	private Button propToggle, debugToggle;
 	private Tween propTween, debugTween;
@@ -15,14 +14,14 @@ public class Canvas : Control
 	/// Constructor loading in the main menu scene for backwards scene navigation
 	/// </summary>
 	public Canvas() {
-		mainMenu = ResourceLoader.Load<PackedScene>("res://_Scenes/MainMenu.tscn");
 	}
 
 	/// <summary>
 	/// Back button capture method
 	/// </summary>
-	public void _on_back_button_pressed() {
-		GetTree().ChangeSceneTo(mainMenu);
+	public void _on_back_button_pressed() 
+	{
+		Navigator.SceneController.GoToMainMenu();
 	}
 
 	/// <summary>

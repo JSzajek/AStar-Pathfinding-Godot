@@ -1,22 +1,28 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://_Scripts/_grid/Grid_AStar.cs" type="Script" id=1]
+[ext_resource path="res://_Scripts/_astar/GridAStar.cs" type="Script" id=1]
 [ext_resource path="res://_Assets/GridCanvas.tscn" type="PackedScene" id=2]
 [ext_resource path="res://_Assets/Viewer.tscn" type="PackedScene" id=3]
 [ext_resource path="res://_Assets/GridScene.tscn" type="PackedScene" id=4]
 [ext_resource path="res://_Assets/Target.tscn" type="PackedScene" id=5]
 [ext_resource path="res://_Assets/Enemy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://_Scripts/PreloadableScene.cs" type="Script" id=7]
+[ext_resource path="res://_Scripts/Ground.cs" type="Script" id=8]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 18, 0.25, 14 )
 
 [node name="Main" type="Node"]
+script = ExtResource( 7 )
 
 [node name="AStar_Linker" type="Spatial" parent="."]
 script = ExtResource( 1 )
-blurWeights = true
-visualizeGrid = true
-visualAlpha = 0.8
+HeightClearance = 3.0
+VisualAlpha = 0.8
+NodeRadius = 0.5
+BlurWeights = true
+BlurSize = 5
+VisualizeGrid = true
 
 [node name="BoundingBox" type="CollisionShape" parent="AStar_Linker"]
 shape = SubResource( 1 )
@@ -38,31 +44,32 @@ shadow_color = Color( 0.45098, 0.427451, 0.34902, 1 )
 
 [node name="Enemy1" parent="Enemies" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75432, 1.31786, 7.10474 )
-moveSpeed = 3.0
-pathSmooth = true
-turningSpeed = 0.5
-turningDist = 3.0
-stoppingDist = 2.0
-targetPath = "/root/Main/Target"
+MoveSpeed = 3.0
+TurningSpeed = 3.0
+TurningDistance = 3.0
+StoppingDistance = 3.0
+ShowPath = true
+TargetPath = NodePath("../../Target")
 
 [node name="Enemy2" parent="Enemies" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.24568, 1.31786, 8.10474 )
-moveSpeed = 3.0
-pathSmooth = true
-turningSpeed = 0.5
-turningDist = 3.0
-stoppingDist = 2.0
-targetPath = "/root/Main/Target"
+MoveSpeed = 3.0
+TurningSpeed = 3.0
+TurningDistance = 3.0
+StoppingDistance = 3.0
+ShowPath = true
+TargetPath = NodePath("../../Target")
 
 [node name="Enemy3" parent="Enemies" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.24568, 1.31786, -7.89526 )
-moveSpeed = 3.0
-pathSmooth = true
-turningSpeed = 0.5
-turningDist = 3.0
-stoppingDist = 2.0
-targetPath = "/root/Main/Target"
+MoveSpeed = 3.0
+TurningSpeed = 3.0
+TurningDistance = 3.0
+StoppingDistance = 3.0
+ShowPath = true
+TargetPath = NodePath("../../Target")
 
 [node name="Target" parent="." instance=ExtResource( 5 )]
 
 [node name="GridScene" parent="." instance=ExtResource( 4 )]
+script = ExtResource( 8 )

@@ -1,5 +1,5 @@
-using Godot;
 using System;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Class representing the basic functionality of all
@@ -7,20 +7,36 @@ using System;
 /// </summary>
 public class Dll
 {
+    #region Delegates
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	private delegate void nativeLibDestroy();
+
+    #endregion Delegates
+
+    #region Fields
+
     protected IntPtr pDll;
+	private nativeLibDestroy _nativeLibDestroy;
+
+    #endregion Fields
+
+    #region Constructors
 
     /// <summary>
-    /// Constructor Initializing the dll by loading
-    /// </summary>
+	/// Initializes a new instance of the <see cref="Dll"/> class.
+	/// </summary>
     /// <param name="path">The path to the dll</param>
     public Dll(string path)
     {
-        if (GetAbsPath(path) is String absPath)
-        {
-            Load(absPath);
-        }
+        Load(FileSystem.EnsureFilePath(path));
+		_nativeLibDestroy = (nativeLibDestroy)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "native_lib_destroy"), typeof(nativeLibDestroy));
     }
+
+    #endregion Constructors
     
+    #region Public Methods
+
     /// <summary>
     /// Loads the dll library from the passed absolute file path
     /// </summary>
@@ -38,27 +54,12 @@ public class Dll
     /// </summary>
     public void Unload()
     {
+        _nativeLibDestroy();
+        
         if (!NativeMethods.FreeLibrary(pDll)) {
             throw (new Exception("AStar Binding dll not unloaded."));
         }
     }
 
-    /// <summary>
-    /// Helper method to find the absolute system-based file path 
-    /// </summary>
-    /// <param name="localPath"></param>
-    /// <returns></returns>
-    private string GetAbsPath(string localPath)
-    {
-        using (var file = new File())
-        {
-            if (file.Open(localPath, File.ModeFlags.Read) == Error.Ok)
-            {
-                var filePath = file.GetPathAbsolute();
-                file.Close();
-                return filePath;
-            }
-        }
-        return null;
-    }
+    #endregion Public Methods
 }

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://_Assets/BaseCanvas.tscn" type="PackedScene" id=1]
 [ext_resource path="res://_Gui_Imports/Title_Font.res" type="DynamicFont" id=2]
-[ext_resource path="res://_Scripts/_kdtree/KDTreeCanvas.cs" type="Script" id=3]
+[ext_resource path="res://_Scripts/KDTreeCanvas.cs" type="Script" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.482353, 0.482353, 0.482353, 0.376471 )

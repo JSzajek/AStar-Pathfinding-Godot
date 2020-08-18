@@ -1,19 +1,21 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://_Assets/NavmeshCanvas.tscn" type="PackedScene" id=1]
 [ext_resource path="res://_Assets/NavmeshScene.tscn" type="PackedScene" id=2]
 [ext_resource path="res://_Assets/Viewer.tscn" type="PackedScene" id=3]
-[ext_resource path="res://_Scripts/_navmesh/Navmesh_AStar.cs" type="Script" id=4]
+[ext_resource path="res://_Scripts/_astar/NavmeshAStar.cs" type="Script" id=4]
 [ext_resource path="res://_Assets/Target.tscn" type="PackedScene" id=5]
 [ext_resource path="res://_Assets/Enemy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://_Scripts/Ground.cs" type="Script" id=7]
+[ext_resource path="res://_Scripts/PreloadableScene.cs" type="Script" id=8]
 
 [node name="Main" type="Node"]
+script = ExtResource( 8 )
 
 [node name="AStar_Linker" type="Spatial" parent="."]
 script = ExtResource( 4 )
-visualizeGrid = true
-visualizeNetwork = true
-visualAlpha = 0.6
+VisualizeGrid = true
+VisualizeNetwork = true
 
 [node name="Debug" type="Spatial" parent="AStar_Linker"]
 
@@ -31,29 +33,33 @@ shadow_color = Color( 0.45098, 0.427451, 0.34902, 1 )
 
 [node name="Enemy" parent="Enemies" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4825, 1, -8.24451 )
-moveSpeed = 3.0
-turningSpeed = 0.5
-turningDist = 3.0
-stoppingDist = 2.0
-targetPath = "/root/Main/Target"
+MoveSpeed = 3.0
+TurningSpeed = 3.0
+TurningDistance = 3.0
+StoppingDistance = 3.0
+ShowPath = true
+TargetPath = NodePath("../../Target")
 
 [node name="Enemy2" parent="Enemies" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4126, 1, 10.7433 )
-moveSpeed = 3.0
-turningSpeed = 0.5
-turningDist = 3.0
-stoppingDist = 2.0
-targetPath = "/root/Main/Target"
+MoveSpeed = 3.0
+TurningSpeed = 3.0
+TurningDistance = 3.0
+StoppingDistance = 3.0
+ShowPath = true
+TargetPath = NodePath("../../Target")
 
 [node name="Enemy3" parent="Enemies" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 21.795, 0.999999, -3.28899 )
-moveSpeed = 3.0
-turningSpeed = 0.5
-turningDist = 3.0
-stoppingDist = 2.0
-targetPath = "/root/Main/Target"
+MoveSpeed = 3.0
+TurningSpeed = 3.0
+TurningDistance = 3.0
+StoppingDistance = 3.0
+ShowPath = true
+TargetPath = NodePath("../../Target")
 
 [node name="NavmeshScene" parent="." instance=ExtResource( 2 )]
+script = ExtResource( 7 )
 
 [node name="Target" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25737, 0, 5.50421 )

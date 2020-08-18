@@ -1,13 +1,13 @@
 using Godot;
+using AStar;
 
 /// <summary>
-/// Canvas class for grid astar
+/// Canvas class for navmesh astar
 /// </summary>
-public class GridCanvas : Control
-{
-    private Grid_AStar aStar;
+public class NavmeshCanvas : Control {
+    private NavmeshAStar aStar;
     private Panel visualizePanel;
-    private Button visualizeToggle, visualizeGrid;
+    private Button visualizeToggle, visualizeGrid, visualizeNetwork;
     private Tween visualizeTween;
     private float initialX;
 
@@ -20,8 +20,9 @@ public class GridCanvas : Control
 		initialX = visualizePanel.RectPosition.x;
         visualizeToggle = visualizePanel.Get<Button>("visualize_toggle");
         visualizeGrid = visualizePanel.Get<Button>("visualize_grid");
+        visualizeNetwork = visualizePanel.Get<Button>("visualize_network");
 		visualizeTween = visualizePanel.Get<Tween>("Tween");
-        aStar = this.Get<Grid_AStar>("../AStar_Linker");
+        aStar = this.Get<NavmeshAStar>("../AStar_Linker");
     }
 
     /// <summary>
@@ -39,12 +40,22 @@ public class GridCanvas : Control
 	}
 
     /// <summary>
-    /// On pressed visualization for astar grid
+    /// On pressed visualization of navmesh for astar navmesh
     /// </summary>
     public void _on_visualize_grid_pressed() {
         if (aStar != null) {
-            aStar.visualizeGrid = !aStar.visualizeGrid;
-            visualizeGrid.Text = aStar.visualizeGrid ? "hide grid" : "show grid";
+            aStar.VisualizeGrid = !aStar.VisualizeGrid;
+            visualizeGrid.Text = aStar.VisualizeGrid ? "hide triangles" : "show triangles";
+        }
+    }
+
+    /// <summary>
+    /// On pressed visualization of network for astar navmesh
+    /// </summary>
+    public void _on_visualize_network_pressed() {
+        if (aStar != null) {
+            aStar.VisualizeNetwork = !aStar.VisualizeNetwork;
+            visualizeNetwork.Text = aStar.VisualizeNetwork ? "hide network" : "show network";
         }
     }
 }

@@ -6,34 +6,53 @@ using Godot;
 /// </summary>
 public abstract class Entity : KinematicBody 
 {
+	#region Fields
+
 	protected readonly Vector3 gravity = Vector3.Down * 12;
 	protected Position3D head;
 	protected Body body;
 
-	[Export]
-	public bool hasBody {get; set;} = true;
+	#endregion Fields
+
+	#region Constructors
 
 	/// <summary>
-	/// Initializes entity parameters
+	/// Initializes a new instance of the <see cref="Entity"/> class.
 	/// </summary>
 	public override void _Ready()
 	{
 		head = this.Get<Position3D>("Head");
-		if (hasBody) {
+		if (HasBody) {
 			body = this.Get<Body>("Body");
 		}
 	}
 
+	#endregion Constructors
+
+	#region Properties
+
 	/// <summary>
-	/// Getter method for the head position (global)
+	/// Gets or sets whether the entity has a body
 	/// </summary>
-	/// <returns>The global head position of the entity</returns>
-	public Vector3 HeadPosition()
+	[Export]
+	public bool HasBody {get; set;} = true;
+
+	#endregion Properties
+
+	#region Public Methods
+
+	/// <summary>
+	/// Gets the head position (global)
+	/// </summary>
+	public Vector3 HeadPosition
 	{
-		if (head == null) {
-			return GlobalTransform.origin;
+		get 
+		{
+			if (head == null) {
+				return GlobalTransform.origin;
+			}
+			return head.GlobalTransform.origin;
 		}
-		return head.GlobalTransform.origin;
 	}
 
 	/// <summary>
@@ -45,13 +64,9 @@ public abstract class Entity : KinematicBody
 	}
 
 	/// <summary>
-	/// Getter method for the global position of the entity
+	/// Gets the global position of the entity
 	/// </summary>
-	/// <returns>The global position of the entity</returns>
-	public Vector3 GetGlobalPosition()
-	{
-		return GlobalTransform.origin;
-	}
+	public Vector3 GlobalPosition => GlobalTransform.origin;
 
 	/// <summary>
 	/// Gets the distance squared to the passed entity
@@ -62,7 +77,7 @@ public abstract class Entity : KinematicBody
 		if (other == null) {
 			return null;
 		}
-		return GetGlobalPosition().DistanceSquaredTo(other.GetGlobalPosition());
+		return GlobalPosition.DistanceSquaredTo(other.GlobalPosition);
 	}
 
 	/// <summary>
@@ -75,6 +90,8 @@ public abstract class Entity : KinematicBody
 		if (other == null) {
 			return null;
 		}
-		return HeadPosition().DistanceSquaredTo(other.HeadPosition());
+		return HeadPosition.DistanceSquaredTo(other.HeadPosition);
 	}
+
+	#endregion Public Methods
 }

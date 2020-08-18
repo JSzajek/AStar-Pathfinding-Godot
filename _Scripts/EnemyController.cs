@@ -4,42 +4,47 @@ using Godot;
 /// Enemy Controller representing a basic enemy logic 
 /// of following a target
 /// </summary>
-public class Enemy : EntityController
+public class EnemyController : EntityController
 {
-	[Export]
-	public float moveSpeed {get; set;} = 1;
-	
-	[Export]
-	public bool pathSmooth {get; set;} = false;
-
-	[Export]
-	public float turningSpeed {get; set;} = 3;
-	
-	[Export]
-	public float turningDist {get; set;} = 5;
-	
-	[Export]
-	public float stoppingDist {get; set;} = 10;
-
-	[Export]
-	public string targetPath {get; set;}
-
-	[Export]
-	public bool showPath {get; set;} = true;
+	#region Fields
 
 	private Entity target;
 
+	#endregion Fields
+
+	#region Properties
+
 	/// <summary>
-	/// Initializes enemy paramters
+	/// Gets or sets the target as a NodePath of the enemy. 
+	/// </summary>
+	[Export]
+	public NodePath TargetPath {get; set;}
+
+	#endregion Properties
+
+	#region Constructors
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Enemy"/> class.
 	/// </summary>
 	public override void _Ready()
 	{
 		base._Ready();
-		base.SetUp(pathSmooth, moveSpeed, turningSpeed, turningDist, stoppingDist, showPath); // Look into passing through constructor
 
-		if (targetPath != null) {
-			StartTracking(GetNode<Entity>(targetPath));
+		if (TargetPath != null) {
+			StartTracking(GetNode<Entity>(TargetPath));
 		}
+	}
+	
+	#endregion Constructors
+
+	#region Public Methods
+
+	/// <summary>
+	/// Stops tracking the current target
+	/// </summary>
+	public void StopTracking() {
+		//TODO: Implement stopping	
 	}
 
 	/// <summary>
@@ -49,7 +54,7 @@ public class Enemy : EntityController
 	public void StartTracking(Entity newTarget)
 	{
 		target = newTarget;
-		RequestPath(target.GetGlobalPosition());
+		RequestPath(target.GlobalPosition);
 	}
 
 	/// <summary>
@@ -60,8 +65,12 @@ public class Enemy : EntityController
 		base._PhysicsProcess(delta);
 
 		if (target != null) {
-			if (HeadDistanceSquaredTo(target) < stoppingDist * stoppingDist) {
-				GetBody()?.HeadLookAt(target.HeadPosition());
+			if (HeadDistanceSquaredTo(target) < StoppingDistance * StoppingDistance) {
+				GetBody()?.HeadLookAt(target.HeadPosition);
+				
+				if (DistanceSquaredTo(target) < StoppingDistance) {
+					base.movementVelocity = Vector3.Zero;
+				}
 			}
 			else {
 				GetBody()?.HeadLookAt(); // Look Forward
@@ -77,4 +86,6 @@ public class Enemy : EntityController
 	public override Vector3 GetTarget() {
 		return target.GlobalTransform.origin;
 	}
+
+	#endregion Public Methods
 }

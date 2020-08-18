@@ -1,4 +1,7 @@
 using Godot;
+using Pathing;
+using Path = Pathing.Path;
+using AStar;
 
 /// <summary>
 /// Entity Controller class, basic controller for all entity
@@ -6,51 +9,84 @@ using Godot;
 /// </summary>
 public class EntityController : Entity 
 {
-	private const float PATH_UPDATE_MOVE_THRESHOLD = 0.5f;
-	private const float sqr_move_threshold = PATH_UPDATE_MOVE_THRESHOLD * PATH_UPDATE_MOVE_THRESHOLD;
-	
+	#region Constants
+
+	private const float MOVE_THRESHOLD = 0.5f;
+	private const float SQR_MOVE_THRESHOLD = MOVE_THRESHOLD * MOVE_THRESHOLD;
+
+	#endregion Constants 
+
+	#region Fields
+
 	private IAStar AStar;
 	private Vector3 target, targetOldPosition;
 	
-	private bool following, requesting, smoothPath = false, showPath = false;
-	private float speed, turnSpeed, turnDist, stopDist;
+	private bool following, requesting;
 	private float speedPercent = 1;
 	private int pathIndex = 0;
 
-	private Vector3[] waypoints;
+	protected Vector3[] waypoints;
 	private Line[] turns;
 	private int finishIndex, slowIndex;
 	public Vector3 movementVelocity;
 
+	#endregion Fields
+
+	#region Constructors
+
 	/// <summary>
-	/// Initialized entity controller parameters
+	/// Initializes a new instance of the <see cref="EntityController"/> class.
 	/// </summary>
 	public override void _Ready()
 	{
 		base._Ready();
-		AStar = this.Get<IAStar>("/root/Main/AStar_Linker");
+		AStar = this.GetRoot().GetFirstChild<IAStar>(true);
 		AStar?.ConnectToTimer(this, "On_Path_Update_Timer_timeout");
 	}
 
+	#endregion Constructors
+
+	#region Public Properties
+
 	/// <summary>
-	/// Set up parameters based off of parameters passed down from super class.
+	/// Gets or sets the movement speed of the enemy. 
 	/// </summary>
-	/// <param name="smoothPath">Whether to utilize path smoothing</param>
-	/// <param name="speed">The speed of movement</param>
-	/// <param name="turnSpeed">The turning speed</param>
-	/// <param name="turnDist">The turning distance</param>
-	/// <param name="stopDist">The stopping distance</param>
-	/// <param name="showPath">Whether to show debug of path (for testing)</param>
-	public void SetUp(bool smoothPath, float speed, float turnSpeed, float turnDist, float stopDist, bool showPath)
-	{
-		// TODO: Investigate a better way to pass down variables while also keeping Godot's editor export functionality
-		this.smoothPath = smoothPath;
-		this.speed = speed;
-		this.turnSpeed = turnSpeed;
-		this.turnDist = turnDist;
-		this.stopDist = stopDist;
-		this.showPath = showPath;
-	}
+	[Export]
+	public float MoveSpeed {get; set;}
+	
+	/// <summary>
+	/// Gets or sets whether the enemy will use smoothed paths.
+	/// </summary>
+	[Export]
+	public bool PathSmoothing {get; set;}
+
+	/// <summary>
+	/// Gets or sets the turning speed of the enemy.
+	/// </summary>
+	[Export]
+	public float TurningSpeed {get; set;}
+	
+	/// <summary>
+	/// Gets or sets the turning distance of the enemy.
+	/// </summary>
+	[Export]
+	public float TurningDistance {get; set;}
+	
+	/// <summary>
+	/// Gets or sets the stopping distance of the enemy.
+	/// </summary>
+	[Export]
+	public float StoppingDistance {get; set;}
+
+	/// <summary>
+	/// Gets or sets whether the enemy will show the pathing - for debugging
+	/// </summary>
+	[Export]
+	public bool ShowPath {get; set;}
+
+	#endregion Public Properties
+
+	#region Public Methods
 
 	/// <summary>
 	/// Path request method, requeting either basic or smooth path to the target position.
@@ -60,12 +96,24 @@ public class EntityController : Entity
 	{
 		this.target = target;
 		targetOldPosition = target;
-		if (smoothPath) {
-			AStar?.RequestPath(new PathRequest(OnPathFound, GetGlobalPosition(), target, this.GetHashCode(), turnDist, stopDist));
+		if (PathSmoothing) {
+			AStar?.RequestPath(new PathRequest(OnPathFound, GlobalPosition, target, GetHashCode(), TurningDistance, StoppingDistance));
 		}
 		else {
-			AStar?.RequestPath(new PathRequest(OnPathFound, GetGlobalPosition(), target, this.GetHashCode()));
+			AStar?.RequestPath(new PathRequest(OnPathFound, GlobalPosition, target, GetHashCode()));
 		}
+	}
+
+	/// <summary>
+	/// Generates a unique hashcode combined with the object's hashcode and the
+	/// target's hashcode.
+	/// </summary>
+	/// <returns>The unique hashcode</returns>
+	public override int GetHashCode() {
+		var hash = 17;
+		hash = hash * 31 + base.GetHashCode();
+		hash = hash * 31 + target.GetHashCode();
+		return hash;
 	}
 
 	/// <summary>
@@ -81,17 +129,35 @@ public class EntityController : Entity
 	}
 
 	/// <summary>
+	/// Stops the entity's pathing 
+	/// </summary>
+	public void Stop() {
+		AStar?.DisconnectTimer(this, "On_Path_Update_Timer_timeout");
+		following = false;
+		pathIndex = 0;
+		waypoints = null;
+	}
+
+	/// <summary>
+	/// Performs cleanup upon exiting the scene.
+	/// </summary>
+	public override void _ExitTree() {
+		Stop();
+	}
+
+	/// <summary>
 	/// Move along the path in a basic manner, following the waypoints
 	/// in sequence.
 	/// </summary>
 	public void MoveAlongPath()
 	{
 		if(!following || pathIndex == waypoints.Length) {
+			movementVelocity = Vector3.Zero;
 			return;
 		}
 
-		var currPoint = new Vector3(waypoints[pathIndex].x, GetGlobalPosition().y, waypoints[pathIndex].z);
-		if (GetGlobalPosition().DistanceTo(currPoint) < 1) {
+		var currPoint = new Vector3(waypoints[pathIndex].x, GlobalPosition.y, waypoints[pathIndex].z);
+		if ((pathIndex == waypoints.Length - 1 && GlobalPosition.DistanceTo(currPoint) < StoppingDistance) || GlobalPosition.DistanceTo(currPoint) < 1) {
 			pathIndex += 1;
 			if (pathIndex > waypoints.Length) {
 				following = false;
@@ -100,7 +166,7 @@ public class EntityController : Entity
 			}
 		}
 		Transform = Transform.LookingAt(currPoint, Vector3.Up);
-		movementVelocity = -Transform.basis.z * speed * speedPercent;
+		movementVelocity = -Transform.basis.z * MoveSpeed * speedPercent;
 	}
 
 	/// <summary>
@@ -110,10 +176,11 @@ public class EntityController : Entity
 	public void MoveAlongSmootPath()
 	{
 		if (!following || pathIndex >= turns.Length) {
+			movementVelocity = Vector3.Zero;
 			return;
 		}
 
-		var position2D = new Vector2(GetGlobalPosition().x, GetGlobalPosition().z);
+		var position2D = new Vector2(GlobalPosition.x, GlobalPosition.z);
 		while (turns[pathIndex].HasCrossedLine(position2D)) {
 			if (pathIndex == finishIndex) {
 				following = false;
@@ -126,19 +193,19 @@ public class EntityController : Entity
 
 		if (following) {
 			speedPercent = 1;
-			if (pathIndex >= slowIndex && stopDist > 0) {
-				speedPercent = Mathf.Clamp(turns[finishIndex].DistanceFromPoint(position2D) / stopDist, 0, 1);
+			if (pathIndex >= slowIndex && StoppingDistance > 0) {
+				speedPercent = Mathf.Clamp(turns[finishIndex].DistanceFromPoint(position2D) / StoppingDistance, 0, 1);
 				if (speedPercent < 0.2f) {
 					following = false;
 					movementVelocity = Vector3.Zero;
 					return;
 				}
 			}
-			var currPoint = new Vector3(waypoints[pathIndex].x, GetGlobalPosition().y, waypoints[pathIndex].z);
+			var currPoint = new Vector3(waypoints[pathIndex].x, GlobalPosition.y, waypoints[pathIndex].z);
 			var target_rot = Transform.LookingAt(currPoint, Vector3.Up).basis;
-			var turned = Transform.basis.Quat().Slerp(target_rot.Quat(), turnSpeed / 5);
+			var turned = Transform.basis.Quat().Slerp(target_rot.Quat(), TurningSpeed / 5);
 			Transform = new Transform(new Basis(turned), Transform.origin);
-			movementVelocity = -Transform.basis.z * speed * speedPercent;
+			movementVelocity = -Transform.basis.z * MoveSpeed * speedPercent;
 		}
 	}
 
@@ -149,13 +216,13 @@ public class EntityController : Entity
 	public override void _PhysicsProcess(float delta)
 	{
 		if (following) {
-			if (smoothPath) {
+			if (PathSmoothing) {
 				MoveAlongSmootPath();
 			}
 			else {
 				MoveAlongPath();
 			}
-		}
+		} 
 	}
 
 	/// <summary>
@@ -173,7 +240,7 @@ public class EntityController : Entity
 		pathIndex = 0;
 		requesting = false;
 		following = true;
-		if (showPath) {
+		if (ShowPath) {
 			DrawPath();
 		}
 	}
@@ -184,7 +251,7 @@ public class EntityController : Entity
 	/// </summary>
 	public void On_Path_Update_Timer_timeout() {
 		var newTarget = GetTarget();
-		if ((newTarget - targetOldPosition).LengthSquared() > sqr_move_threshold)
+		if ((newTarget - targetOldPosition).LengthSquared() > SQR_MOVE_THRESHOLD)
 		{
 			requesting = true;
 			RequestPath(newTarget);
@@ -193,7 +260,7 @@ public class EntityController : Entity
 	}
 
 	/// <summary>
-	/// Path drawing method for debug testing
+	/// Draws the current path - for debugging
 	/// </summary>
 	public void DrawPath() {
 		var debug = this.Get<Spatial>("/root/Main/AStar_Linker/Debug");
@@ -211,8 +278,8 @@ public class EntityController : Entity
 		geometry.Clear();
 		geometry.Begin(Mesh.PrimitiveType.Lines);
 		for(int i = 0; i < waypoints.Length - 1; i++) {
-			geometry.AddVertex(waypoints[i] + (Vector3.Up * HeadPosition().y));
-			geometry.AddVertex(waypoints[i+1] + (Vector3.Up * HeadPosition().y));
+			geometry.AddVertex(waypoints[i] + (Vector3.Up * HeadPosition.y));
+			geometry.AddVertex(waypoints[i+1] + (Vector3.Up * HeadPosition.y));
 		}
 		geometry.End();
 	}
@@ -224,4 +291,6 @@ public class EntityController : Entity
 	public virtual Vector3 GetTarget() {
 		return target;
 	}
+
+	#endregion Public Methods
 }

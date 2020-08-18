@@ -1,18 +1,19 @@
 using Godot;
+using AStar;
 
 /// <summary>
-/// Canvas class for kdtree astar
+/// Canvas class for grid astar
 /// </summary>
-public class KDTreeCanvas : Control
+public class GridCanvas : Control
 {
-    private KDTree_AStar aStar;
+    private GridAStar aStar;
     private Panel visualizePanel;
     private Button visualizeToggle, visualizeGrid;
     private Tween visualizeTween;
     private float initialX;
 
     /// <summary>
-    /// Initializes Parameters
+    /// Initializing parameters
     /// </summary>
     public override void _Ready()
 	{
@@ -21,7 +22,7 @@ public class KDTreeCanvas : Control
         visualizeToggle = visualizePanel.Get<Button>("visualize_toggle");
         visualizeGrid = visualizePanel.Get<Button>("visualize_grid");
 		visualizeTween = visualizePanel.Get<Tween>("Tween");
-        aStar = this.Get<KDTree_AStar>("../AStar_Linker");
+        aStar = this.Get<GridAStar>("../AStar_Linker");
     }
 
     /// <summary>
@@ -39,12 +40,12 @@ public class KDTreeCanvas : Control
 	}
 
     /// <summary>
-    /// On pressed visualization for astar kdtree
+    /// On pressed visualization for astar grid
     /// </summary>
     public void _on_visualize_grid_pressed() {
         if (aStar != null) {
-            aStar.visualizeGrid = !aStar.visualizeGrid;
-            visualizeGrid.Text = aStar.visualizeGrid ? "hide grid" : "show grid";
+            aStar.VisualizeGrid = !aStar.VisualizeGrid;
+            visualizeGrid.Text = aStar.VisualizeGrid ? "hide grid" : "show grid";
         }
     }
 }
