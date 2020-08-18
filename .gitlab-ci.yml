@@ -5,8 +5,8 @@ stages:
     - test
 
 variables:
-    solution: "Architect Game.sln"
-    test: "Architect Game.Test"
+    solution: "AStar Pathing.sln"
+    test: "AStar Pathing.Test"
 
 build:
     stage: build
