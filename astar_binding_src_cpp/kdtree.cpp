@@ -38,23 +38,26 @@ KDTree::KDTree(deque<tuple<Vector3, bool, int>> points, bool inPlace)
 
 // Destructor
 KDTree::~KDTree() {
-	clearChild(root);
+	Clear(root);
+	root = NULL;
 }
 
 // Recursive Helper method that clears all the children of the node
-void KDTree::clearChild(PathNode* node) {
+void KDTree::Clear(PathNode* node) {
+	if (node == NULL) { return; }
+
 	if (node->left != NULL) {
-		clearChild(node->left);
+		Clear(node->left);
 	}
 	else if (node->right != NULL) {
-		clearChild(node->right);
+		Clear(node->right);
 	}
 	delete node;
 }
 
 // Clears the tree
-void KDTree::clear() {
-	clearChild(root);
+void KDTree::Clear() {
+	Clear(root);
 	root = NULL;
 }
 
@@ -62,7 +65,7 @@ void KDTree::clear() {
 PathNode* KDTree::CreateRoot(deque<tuple<Vector3, bool, int>> _points, bool inPlace, int& leaves) {
 	// Implement not copy of vector
 	int dimensions = 3;
-	PathNode* _root = createRoot(_points, 0, dimensions, 0, _points.size(), leaves);
+	PathNode* _root = CreateRoot(_points, 0, dimensions, 0, _points.size(), leaves);
 	return _root;
 }
 
@@ -78,8 +81,8 @@ PathNode* KDTree::Nearest(Vector3 position)
 PathNode* KDTree::Nearest(Vector3 position, float* distance)
 {
 	PathNode* result = root;
-	*distance = calcDistance(root->position, position);
-	nearest(root, position, result, distance);
+	*distance = CalculateDistance(root->position, position);
+	NearestNode(root, position, result, distance);
 	return result;
 }
 
@@ -89,7 +92,7 @@ vector<PathNode*> KDTree::Nearest(Vector3 position, float radius)
 {
 	vector<PathNode*> list = vector<PathNode*>();
 	if (this->root != NULL) {
-		nearest(root, position, radius, list);
+		NearestNode(root, position, radius, list);
 	}
 	return list;
 }
@@ -99,7 +102,7 @@ PathNode* KDTree::AddNode(tuple<Vector3, bool, int> vals)
 {
 	count++;
 	PathNode* root = this->root;
-	PathNode* node = insert(root, vals, 0);
+	PathNode* node = InsertNode(root, vals, 0);
 	this->root = root;
 	return node;
 }
@@ -107,11 +110,11 @@ PathNode* KDTree::AddNode(tuple<Vector3, bool, int> vals)
 // Removes the passed position from the tree
 void KDTree::RemoveNode(Vector3 position)
 {
-	root = deleteNode(root, position, 0);
+	root = DeleteNode(root, position, 0);
 }
 
 // Creates a root node from the passed list of points
-PathNode* KDTree::createRoot(deque<tuple<Vector3, bool, int>> points, int depth, int k, int start, int length, int& leaves)
+PathNode* KDTree::CreateRoot(deque<tuple<Vector3, bool, int>> points, int depth, int k, int start, int length, int& leaves)
 {
 	if (length <= 0)
 	{
@@ -128,8 +131,8 @@ PathNode* KDTree::createRoot(deque<tuple<Vector3, bool, int>> points, int depth,
 
 	tuple<Vector3, bool, int> median = points.at(half);
 	depth++;
-	PathNode* left = createRoot(points, depth, k, leftStart, leftLen, leaves);
-	PathNode* right = createRoot(points, depth, k, rightStart, rightLen, leaves);
+	PathNode* left = CreateRoot(points, depth, k, leftStart, leftLen, leaves);
+	PathNode* right = CreateRoot(points, depth, k, rightStart, rightLen, leaves);
 
 	if (left == NULL && right == NULL) {
 		leaves++;
@@ -139,9 +142,9 @@ PathNode* KDTree::createRoot(deque<tuple<Vector3, bool, int>> points, int depth,
 
 // Recursive helper method that finds the "nearest" node within the tree that is
 // approximately equivalent to the passed position
-void KDTree::nearest(PathNode* current, Vector3 position, PathNode*& match, float* minDistance)
+void KDTree::NearestNode(PathNode* current, Vector3 position, PathNode*& match, float* minDistance)
 {
-	float dist = KDTree::calcDistance(position, current->position);
+	float dist = KDTree::CalculateDistance(position, current->position);
 
 	if (dist < *minDistance) {
 		*minDistance = dist;
@@ -153,27 +156,27 @@ void KDTree::nearest(PathNode* current, Vector3 position, PathNode*& match, floa
 	float u = value - median;
 	if (u <= 0) {
 		if (current->left != NULL) {
-			nearest(current->left, position, match, minDistance);
+			NearestNode(current->left, position, match, minDistance);
 		}
 		if (current->right != NULL && abs(u) <= *minDistance) {
-			nearest(current->right, position, match, minDistance);
+			NearestNode(current->right, position, match, minDistance);
 		}
 	}
 	else {
 		if (current->right != NULL) {
-			nearest(current->right, position, match, minDistance);
+			NearestNode(current->right, position, match, minDistance);
 		}
 		if (current->left != NULL && abs(u) <= *minDistance) {
-			nearest(current->left, position, match, minDistance);
+			NearestNode(current->left, position, match, minDistance);
 		}
 	}
 }
 
 // Recursive helper method that finds the "nearest" nodes within the tree that is
 // close to the passed position
-void KDTree::nearest(PathNode* current, Vector3 position, float radius, vector<PathNode*>& list)
+void KDTree::NearestNode(PathNode* current, Vector3 position, float radius, vector<PathNode*>& list)
 {
-	float dist = KDTree::calcDistance(position, current->position);
+	float dist = KDTree::CalculateDistance(position, current->position);
 
 	if (dist <= radius) {
 		list.push_back(current);
@@ -185,24 +188,24 @@ void KDTree::nearest(PathNode* current, Vector3 position, float radius, vector<P
 
 	if (u <= 0) {
 		if (current->left != NULL) {
-			nearest(current->left, position, radius, list);
+			NearestNode(current->left, position, radius, list);
 		}
 		if (current->right != NULL && abs(u) <= radius) {
-			nearest(current->right, position, radius, list);
+			NearestNode(current->right, position, radius, list);
 		}
 	}
 	else {
 		if (current->right != NULL) {
-			nearest(current->right, position, radius, list);
+			NearestNode(current->right, position, radius, list);
 		}
 		if (current->left != NULL) {
-			nearest(current->left, position, radius, list);
+			NearestNode(current->left, position, radius, list);
 		}
 	}
 }
 
 // Recursive helper method that deletes the passed position from the passed node
-PathNode* KDTree::deleteNode(PathNode* node, Vector3 position, int depth)
+PathNode* KDTree::DeleteNode(PathNode* node, Vector3 position, int depth)
 {
 	if (node == NULL) {
 		return NULL;
@@ -211,14 +214,14 @@ PathNode* KDTree::deleteNode(PathNode* node, Vector3 position, int depth)
 	int axis = depth % dimensions;
 	if (position.Equals(node->position)) {
 		if (node->right != NULL) {
-			PathNode* min = findMinNode(node->right, axis);
-			node->position = *min->position.Clone();
-			node->right = deleteNode(node->right, min->position, depth + 1);
+			PathNode* min = GetMinimumNode(node->right, axis);
+			node->position = *new Vector3(min->position);
+			node->right = DeleteNode(node->right, min->position, depth + 1);
 		}
 		else if (node->left != NULL) {
-			PathNode* min = findMinNode(node->left, axis);
-			node->position = *min->position.Clone();
-			node->left = deleteNode(node->left, min->position, depth + 1);
+			PathNode* min = GetMinimumNode(node->left, axis);
+			node->position = *new Vector3(min->position);
+			node->left = DeleteNode(node->left, min->position, depth + 1);
 		}
 		else {
 			node = NULL;
@@ -227,22 +230,22 @@ PathNode* KDTree::deleteNode(PathNode* node, Vector3 position, int depth)
 	}
 
 	if (position[axis] < node->position[axis]) {
-		node->left = deleteNode(node->left, position, depth + 1);
+		node->left = DeleteNode(node->left, position, depth + 1);
 	}
 	else {
-		node->right = deleteNode(node->right, position, depth + 1);
+		node->right = DeleteNode(node->right, position, depth + 1);
 	}
 	return node;
 }
 
 // Finds the minimum node from the passed node
-PathNode* KDTree::findMinNode(PathNode* node, int axis)
+PathNode* KDTree::GetMinimumNode(PathNode* node, int axis)
 {
-	return findMin(node, axis, 0);
+	return GetMinimumNode(node, axis, 0);
 }
 
 // Recursive Helper method to find the minimum node from the passed node on the passed axis
-PathNode* KDTree::findMin(PathNode* node, int currentAxis, int depth)
+PathNode* KDTree::GetMinimumNode(PathNode* node, int currentAxis, int depth)
 {
 	if (node == NULL) {
 		return NULL;
@@ -253,15 +256,16 @@ PathNode* KDTree::findMin(PathNode* node, int currentAxis, int depth)
 		if (node->left == NULL) {
 			return node;
 		}
-		return findMin(node->left, currentAxis, depth + 1);
+		return GetMinimumNode(node->left, currentAxis, depth + 1);
 	}
-	return minNode(node,
-				   findMin(node->left, currentAxis, depth + 1),
-				   findMin(node->right, currentAxis, depth + 1), currentAxis);
+	return MinimumNode(node,
+					   GetMinimumNode(node->left, currentAxis, depth + 1),
+				       GetMinimumNode(node->right, currentAxis, depth + 1), 
+					   currentAxis);
 }
 
 // Helper method to find the minimum node of the passed nodes based on the passed axis
-PathNode* KDTree::minNode(PathNode* x, PathNode* y, PathNode* z, int axis)
+PathNode* KDTree::MinimumNode(PathNode* x, PathNode* y, PathNode* z, int axis)
 {
 	PathNode* result = x;
 	if (y != NULL && y->position[axis] < result->position[axis]) {
@@ -274,7 +278,7 @@ PathNode* KDTree::minNode(PathNode* x, PathNode* y, PathNode* z, int axis)
 }
 
 // Recursive helper method that inserts the node at the passed node
-PathNode* KDTree::insert(PathNode*& node, tuple<Vector3, bool, int> vals, int depth)
+PathNode* KDTree::InsertNode(PathNode*& node, tuple<Vector3, bool, int> vals, int depth)
 {
 	Vector3 position = get<0>(vals);
 	if (node == NULL) {
@@ -284,13 +288,13 @@ PathNode* KDTree::insert(PathNode*& node, tuple<Vector3, bool, int> vals, int de
 	else {
 		if (position[node->axis] < node->position[node->axis]) {
 			PathNode* child = node->left == NULL ? NULL : node->left;
-			PathNode* newNode = insert(child, vals, depth + 1);
+			PathNode* newNode = InsertNode(child, vals, depth + 1);
 			node->left = child;
 			return newNode;
 		}
 		else {
 			PathNode* child = node->right == NULL ? NULL : node->right;
-			PathNode* newNode = insert(child, vals, depth + 1);
+			PathNode* newNode = InsertNode(child, vals, depth + 1);
 			node->right = child;
 			return newNode;
 		}
@@ -298,13 +302,13 @@ PathNode* KDTree::insert(PathNode*& node, tuple<Vector3, bool, int> vals, int de
 }
 
 // Distance method 
-float KDTree::calcDistance(float x, float y)
+float KDTree::CalculateDistance(float x, float y)
 {
 	return abs(x - y);
 }
 
 // Distance method 
-float KDTree::calcDistance(Vector3 a, Vector3 b)
+float KDTree::CalculateDistance(Vector3 a, Vector3 b)
 {
 	return a.DistanceTo(b);
 }

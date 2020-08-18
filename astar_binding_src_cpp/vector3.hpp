@@ -12,6 +12,7 @@ namespace std
 
 		Vector3();
 		Vector3(float _x, float _y, float _z);
+		Vector3(const Vector3& other);
 		~Vector3();
 
 		Vector3& operator+(Vector3 vec);

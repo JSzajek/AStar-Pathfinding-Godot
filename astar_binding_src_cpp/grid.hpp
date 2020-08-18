@@ -17,17 +17,15 @@ namespace astar
 	{
 	private:
 		const int obstacleProximityPenalty = 10;
-		
 		Matrix<PathNode*>* grid;
-		std::Vector3 centerPoint = std::Vector3();
-		
+		Vector3 centerPoint = Vector3();
+		map<int, int> walkableRegionDictionary;
+	public:
 		int gridSizeX;
 		int gridSizeY;
 		int minPenalty;
 		int maxPenalty;
 
-		map<int, int> walkableRegionDictionary = map<int, int>();
-	public:
 		Grid(int sizeX, int sizeY, int _minPenalty, int _maxPenalty);
 		~Grid();
 
@@ -37,9 +35,10 @@ namespace astar
 
 		int getMaxSize() { return gridSizeX * gridSizeY; }
 		int logBase(float value, int base) { return (int)log(value) / (int)log(base); }
-		vector<PathNode> getNeighbors(PathNode* node);
+		vector<PathNode*> getNeighbors(PathNode* node);
 		PathNode* nodeFromWorldPoint(std::Vector3 worldPosition);
 		const std::tuple<int, int> blurPenaltyMap(int blurSize);
+		const vector<PathNode> exportGrid();
 
 		string ToString()
 		{

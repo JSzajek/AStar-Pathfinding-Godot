@@ -32,18 +32,18 @@ namespace astar
 		int count;
 		int dimensions;
 		int leaves;
-		PathNode* createRoot(deque<tuple<Vector3, bool, int>> points, int depth, int k, int start, int length, int& leaves);
-		void nearest(PathNode* current, Vector3 position, PathNode*& match, float* minDistance);
-		void nearest(PathNode* current, Vector3 position, float radius, vector<PathNode*>& list);
-		PathNode* deleteNode(PathNode* node, Vector3 position, int depth);
-		PathNode* findMinNode(PathNode* node, int axis);
-		PathNode* findMin(PathNode* node, int currentAxis, int depth);
-		PathNode* minNode(PathNode* x, PathNode* y, PathNode* z, int axis);
-		PathNode* insert(PathNode*& node, tuple<Vector3, bool, int> vals, int depth);
-		void clearChild(PathNode* node);
+		PathNode* CreateRoot(deque<tuple<Vector3, bool, int>> points, int depth, int k, int start, int length, int& leaves);
+		void NearestNode(PathNode* current, Vector3 position, PathNode*& match, float* minDistance);
+		void NearestNode(PathNode* current, Vector3 position, float radius, vector<PathNode*>& list);
+		PathNode* DeleteNode(PathNode* node, Vector3 position, int depth);
+		PathNode* GetMinimumNode(PathNode* node, int axis);
+		PathNode* GetMinimumNode(PathNode* node, int currentAxis, int depth);
+		PathNode* MinimumNode(PathNode* x, PathNode* y, PathNode* z, int axis);
+		PathNode* InsertNode(PathNode*& node, tuple<Vector3, bool, int> vals, int depth);
+		void Clear(PathNode* node);
 
-		float calcDistance(float x, float y);
-		float calcDistance(Vector3 x, Vector3 y);
+		float CalculateDistance(float x, float y);
+		float CalculateDistance(Vector3 x, Vector3 y);
 	public:
 		KDTree();
 		KDTree(int dimensions);
@@ -52,7 +52,7 @@ namespace astar
 		KDTree(deque<tuple<Vector3, bool, int>>  points, bool inPlace = false);
 		~KDTree();
 
-		void clear();
+		void Clear();
 		bool IsEmpty() { return count == 0; }
 		PathNode* CreateRoot(deque<tuple<Vector3, bool, int>> points, bool inPlace, int& leaves);
 		PathNode* Nearest(Vector3 position);

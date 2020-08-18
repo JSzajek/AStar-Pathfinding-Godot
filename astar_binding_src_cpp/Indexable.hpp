@@ -9,7 +9,7 @@ public:
 
 	// Default constructor
 	Indexable()
-{
+	{
 		index = -1;
 	}
 
@@ -20,8 +20,7 @@ public:
 	}
 
 	// Clean up method
-	virtual void CleanUp() {
-	}
+	virtual void CleanUp() { }
 
 	// Comparison method
 	virtual int operator<(Indexable* comparison)

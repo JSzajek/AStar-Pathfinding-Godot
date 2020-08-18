@@ -7,9 +7,8 @@ using namespace std;
 /// <summary>
 /// Initializes a new default instance of Vector3
 /// </summary>
-Vector3::Vector3()
+Vector3::Vector3() : x(0), y(0), z(0)
 {
-	this->x = this->y = this->z = 0;
 }
 
 /// <summary>
@@ -18,11 +17,17 @@ Vector3::Vector3()
 /// <param _x>The x value</param>
 /// <param _y>The y value</param>
 /// <param _z>The z value</param>
-Vector3::Vector3(float _x, float _y, float _z)
+Vector3::Vector3(float _x, float _y, float _z) : x(_x), y(_y), z(_z)
 {
-	this->x = _x;
-	this->y = _y;
-	this->z = _z;
+}
+
+/// <summary>
+/// Copy constructor for cloned instance of Vector3
+/// </summary>
+/// <param name="other">The Vector3 to clone</param>
+/// <returns>The cloned instance</returns>
+Vector3::Vector3(const Vector3& other) : x(other.x), y(other.y), z(other.z)
+{
 }
 
 /// <summary>
@@ -137,15 +142,6 @@ float Vector3::DirectionTo(Vector3 vec)
 bool Vector3::Equals(Vector3 vec)
 {
 	return abs(this->x - vec.x) < FLT_EPSILON && abs(this->y - vec.y) < FLT_EPSILON && abs(this->z - vec.z) < FLT_EPSILON;
-}
-
-/// <summary>
-/// Clones the Vector3
-/// </summary>
-/// <param vec>Clone Vector3</param>
-Vector3* Vector3::Clone()
-{
-	return new Vector3(x, y, z);
 }
 
 /// <summary>

@@ -16,11 +16,6 @@ public:
 	T* left;
 	T* right;
 
-	// Comparison method
-	int CompareTo(Node other) {
-		return position[axis] - other.position[other.axis];
-	}
-
 	// Initializes a new instance of Node
 	Node() : axis(0), position(Vector3(0,0,0)), left(NULL), right(NULL) { }
 

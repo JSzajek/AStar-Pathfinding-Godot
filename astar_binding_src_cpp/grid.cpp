@@ -27,7 +27,10 @@ Grid::Grid(int sizeX, int sizeY, int _minPenalty, int _maxPenalty)
 /// </summary>
 Grid::~Grid() 
 {
-	clearGrid();
+	if (grid != NULL) {
+		clearGrid();
+		grid = NULL;
+	}
 }
 
 /// <summary>
@@ -39,10 +42,13 @@ void Grid::clearGrid()
 	{
 		for (int j = 0; j < gridSizeY; j++)
 		{
-			delete grid->operator()(i, j);
+			if (grid->operator()(i, j) != NULL) {
+				delete grid->operator()(i, j);
+			}
 		}
 	}
 	delete grid;
+	grid = NULL;
 }
 
 /// <summary>
@@ -70,9 +76,9 @@ PathNode* Grid::getGridNode(int x, int y)
 /// Gets the neighbors around the PathNode.
 /// </summary>
 /// <param node>The center PathNode</param>
-vector<PathNode> Grid::getNeighbors(PathNode* node)
+vector<PathNode*> Grid::getNeighbors(PathNode* node)
 {
-	vector<PathNode> neighbors = vector<PathNode>();
+	vector<PathNode*> neighbors;
 	for (int x = -1; x <= 1; x++)
 	{
 		for (int y = -1; y <= 1; y++)
@@ -86,9 +92,9 @@ vector<PathNode> Grid::getNeighbors(PathNode* node)
 
 			if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
 			{
-				if (grid->operator()(checkX, checkY)->value != NULL)
+				if (grid->operator()(checkX, checkY) != NULL)
 				{
-					neighbors.push_back(*(grid->operator()(checkX, checkY)->value));
+					neighbors.push_back(grid->operator()(checkX, checkY));
 				}
 			}
 		}
@@ -102,8 +108,8 @@ vector<PathNode> Grid::getNeighbors(PathNode* node)
 /// <param worldPosition>The world position to be evaluated</param>
 PathNode* Grid::nodeFromWorldPoint(Vector3 worldPosition)
 {
-	float percentX = (worldPosition.x + gridSizeX / 2.0) / gridSizeX;
-	float percentY = (-worldPosition.z + gridSizeY / 2.0) / gridSizeY;
+	float percentX = (worldPosition.x + (gridSizeX / 2.0)) / gridSizeX;
+	float percentY = (-worldPosition.z + (gridSizeY / 2.0)) / gridSizeY;
 
 	percentX = clamp(percentX, 0, 1);
 	percentY = clamp(percentY, 0, 1);
@@ -174,4 +180,23 @@ const std::tuple<int, int> Grid::blurPenaltyMap(int blurSize)
 		}
 	}
 	return std::make_tuple(minPenalty, maxPenalty);
+}
+
+/// <summary>
+/// Exports the nodes from the grid in a vector collection.
+/// </summary>
+/// <returns>The nodes of the grid</returns>
+const vector<PathNode> Grid::exportGrid()
+{
+	vector<PathNode> results;
+	for (int i = 0; i < gridSizeX; i++)
+	{
+		for (int j = 0; j < gridSizeY; j++)
+		{
+			if (grid->operator()(i, j) != NULL) {
+				results.push_back(*grid->operator()(i, j));
+			}
+		}
+	}
+	return results;
 }

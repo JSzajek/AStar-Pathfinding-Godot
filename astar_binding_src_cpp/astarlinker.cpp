@@ -12,8 +12,15 @@ AStar* AstarLinker::astar;
 AstarLinker::~AstarLinker()
 {
 	// clean up astar
-	//free(_astar);
+	delete astar;
 	//debugFile.close();
+}
+
+void AstarLinker::Destroy()
+{
+	// clean up astar
+	delete astar;
+	astar = NULL;
 }
 
 // Initializes the astar grid
@@ -24,16 +31,28 @@ void AstarLinker::setupGrid(float _nodeRadius, int _minPenalty, int _maxPenalty)
 	astar = new AStar(_nodeRadius, _minPenalty, _maxPenalty);
 }
 
+void AstarLinker::setupGrid(Vector2 gridSize, int _minPenalty, int _maxPenalty, Vector3 offset)
+{
+	astar = new AStar(gridSize, _minPenalty, _maxPenalty, offset);
+}
+
 // Clears the astar grid
 void AstarLinker::clearGrid() 
 {
-	astar->clearGridNodes();
+	if (astar != NULL) {
+		astar->clearGridNodes();
+	}
 }
 
 //void AstarLinker::writeToDebug(std::string str)
 //{
 //	debugFile << str << endl;
 //}
+
+void AstarLinker::addGridPoint(Vector3 pos, Vector2 gridPos, bool walkable, int movePenalty) 
+{
+	astar->addGridNode(new PathNode(pos, gridPos, walkable, movePenalty));
+}
 
 // Adds the passed point to the astar grid
 void AstarLinker::addGridPoint(Vector3 pos, bool walkable, int movePenalty)
@@ -50,6 +69,11 @@ void AstarLinker::addGridPoints(float* points, int d1, int d2)
 		deque.push_back(make_tuple(Vector3(points[(i * d2) + 0], points[(i * d2) + 1], points[(i * d2) + 2]), points[(i * d2) + 3] == 1, (int)points[(i * d2) + 4]));
 	}
 	astar->addGridNodes(deque);
+}
+
+void AstarLinker::addGridPoints(float* points, int d1) 
+{
+	astar->addGridNodes(points, d1);
 }
 
 // Removes the passed point from the astar grid
@@ -77,6 +101,23 @@ float* AstarLinker::getGridPoint(std::Vector3 position)
 	
 	std::Vector3 worldPos = node->position;
 	return new float[5] {
+		worldPos.x,
+		worldPos.y,
+		worldPos.z,
+		(float)node->getMovementPenalty(),
+		(float)(node->getWalkable() ? 1 : 0)
+	};
+}
+
+// Gets the grid point from the grid coordinates
+float* AstarLinker::getGridPoint(int gridX, int gridY)
+{
+	PathNode* node = astar->getGridNode(gridX, gridY);
+	// Convert to int array with following format:
+	// [worldPos.x, worldPos.y, worldPos.z, movePenalty, walkable (0 - false, 1 - true)]
+
+	std::Vector3 worldPos = node->position;
+	return new float[5]{
 		worldPos.x,
 		worldPos.y,
 		worldPos.z,
@@ -162,7 +203,55 @@ string AstarLinker::ToString()
 }
 
 // Blurs the weights of the grid (not implemented for kdtree)
-//std::tuple<int, int> AstarLinker::blurWeight(int _blurSize)
-//{
-//	return astar->blurWeights(_blurSize);
-//}
+tuple<int, int> AstarLinker::blurWeight(int _blurSize)
+{
+	return astar->blurWeights(_blurSize);
+}
+
+float* AstarLinker::exportGrid()
+{
+	// Currently only packing grid type astar
+
+	tuple<vector<PathNode>, Vector3, int, int, int, int> packed_astar = astar->exportGrid();
+	vector<PathNode> packed_grid = get<0>(packed_astar);
+
+	if (packed_grid.size() == 0) { return new float[0]{}; }
+
+	// Total size, type of astar, Vector3 offset,
+	// grid size x, grid size y, 
+	// min penalty, max penalty, points...
+
+	std::vector<float> unpacked_grid = vector<float>();
+	unpacked_grid.push_back((packed_grid.size() * 7) + 9);
+	unpacked_grid.push_back(0); // Format type of grid
+	unpacked_grid.push_back(get<1>(packed_astar).x);
+	unpacked_grid.push_back(get<1>(packed_astar).y);
+	unpacked_grid.push_back(get<1>(packed_astar).z);
+
+	unpacked_grid.push_back(get<2>(packed_astar));
+	unpacked_grid.push_back(get<3>(packed_astar));
+	unpacked_grid.push_back(get<4>(packed_astar));
+	unpacked_grid.push_back(get<5>(packed_astar));
+
+	for (int i = 0; i < packed_grid.size(); i++)
+	{
+		unpacked_grid.push_back(packed_grid[i].getGridX());
+		unpacked_grid.push_back(packed_grid[i].getGridY());
+
+		unpacked_grid.push_back(packed_grid[i].position.x);
+		unpacked_grid.push_back(packed_grid[i].position.y);
+		unpacked_grid.push_back(packed_grid[i].position.z);
+
+		unpacked_grid.push_back(packed_grid[i].getWalkable());
+		unpacked_grid.push_back(packed_grid[i].getMovementPenalty());
+	}
+	float* data = new float[unpacked_grid.size()];
+	std::copy(unpacked_grid.begin(), unpacked_grid.end(), data);
+	return data;
+}
+
+void AstarLinker::importGrid(float* nodes, int d1)
+{
+	if (astar != NULL) { delete astar; }
+	astar = new AStar(nodes, d1);
+}

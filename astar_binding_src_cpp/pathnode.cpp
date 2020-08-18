@@ -17,12 +17,27 @@ using namespace astar;
 PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty) 
 	: walkable(_walkable), movementPenalty(_movementPenalty)
 {
-	this->index = -1;
-	this->position = _worldPos;
-	this->axis = 0;
-	this->left = NULL;
-	this->right = NULL;
-	this->hash = std::hash<string>()(this->position.ToString());
+	index = -1;
+	position = _worldPos;
+	axis = 0;
+	left = NULL;
+	right = NULL;
+	hash = std::hash<string>()(this->position.ToString());
+}
+
+/// <summary>
+/// Initializes a new instance of PathNode
+/// </summary>
+/// <param _worldPos>The world position of the node</param>
+/// <param _gridPos>The grid position of the node</param>
+/// <param _walkable>The walkability of the node</param>
+/// <param _movementPenalty>The movement penalty of the node</param>
+/// <returns></returns>
+PathNode::PathNode(std::Vector3 _worldPos, std::Vector2 _gridPos, bool _walkable, int _movementPenalty)
+	: PathNode(_worldPos, _walkable, _movementPenalty)
+{
+	gridX = _gridPos.x;
+	gridY = _gridPos.y;
 }
 
 /// <summary>
@@ -31,11 +46,12 @@ PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty)
 /// <param _worldPos>The world position of the node</param>
 /// <param _walkable>The walkability of the node</param>
 /// <param _movementPenalty>The movement penalty of the node</param>
-PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty, int axis) 
-	: PathNode(_worldPos, _walkable, _movementPenalty) {
-	this->axis = axis;
-	this->left = NULL;
-	this->right = NULL;
+PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty, int _axis) 
+	: PathNode(_worldPos, _walkable, _movementPenalty) 
+{
+	axis = axis;
+	left = NULL;
+	right = NULL;
 }
 
 /// <summary>
@@ -47,8 +63,9 @@ PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty,
 /// <param axis>The axis of the node</param>
 /// <param left>The left child of the node</param>
 /// <param right>The right child of the node</param>
-PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty, int axis, PathNode* left, PathNode* right) :
-	PathNode(_worldPos, _walkable, _movementPenalty, axis) {
+PathNode::PathNode(std::Vector3 _worldPos, bool _walkable, int _movementPenalty, int _axis, PathNode* left, PathNode* right) :
+	PathNode(_worldPos, _walkable, _movementPenalty, _axis) 
+{
 	this->left = left;
 	this->right = right;
 }
@@ -61,7 +78,7 @@ PathNode::~PathNode() { }
 /// <summary>
 /// F Cost of the node.
 /// </summary>
-int PathNode::fCost()
+const int PathNode::fCost()
 {
 	return this->gCost + this->hCost;
 }
@@ -92,11 +109,12 @@ bool PathNode::operator==(const PathNode& other) const
 }
 
 // Resets the pathnode
-void PathNode::CleanUp() {
-	this->index = -1;
-	this->setHCost(0);
-	this->setGCost(0);
-	this->setParent(NULL);
+void PathNode::CleanUp() 
+{
+	index = -1;
+	hCost = 0;
+	gCost = 0;
+	parent = NULL;
 }
 
 /// <summary>
