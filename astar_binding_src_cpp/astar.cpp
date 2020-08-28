@@ -1,387 +1,242 @@
-#include"pch.h"
-#include "astar.hpp"
-#include "astarlinker.hpp"
+#include "pch.h"
 
-using namespace std;
-using namespace astar;
+#include "AStar.h"
 
-/// <summary>
-/// Initializes a new instance of AStar. (KDTree)
-/// </summary>
-/// <param _worldSize>The world size of the AStar algorithm</param>
-/// <param _minPenalty>The minimum movement penalty</param>
-/// <param _maxPenalty>The maximum movement penalty</param>
-AStar::AStar(float _nodeRadius, int _minPenalty, int _maxPenalty)
-	: minPenalty(_minPenalty), maxPenalty(_maxPenalty), nodeRadius(_nodeRadius), tree(new KDTree(3)),
-      offset(Vector3()), grid(NULL)
+AStar::AStar(Vec2 gridDimension, int minPenalty, int maxPenalty, Vec3 offset)
+	: m_minPenalty(minPenalty), m_maxPenalty(maxPenalty),
+	m_grid(Grid<PathPoint>((int)gridDimension.x, (int)gridDimension.y)),
+	m_worldOffset(offset)
 {
 }
 
-/// <summary>
-/// Initializes a new instance of AStar. (Grid)
-/// </summary>
-/// <param name="gridSize">The grid size of the AStar algorithm</param>
-/// <param _minPenalty>The minimum movement penalty</param>
-/// <param _maxPenalty>The maximum movement penalty</param>
-/// <param name="_offset">The world offset value</param>
-AStar::AStar(Vector2 gridSize, int _minPenalty, int _maxPenalty, Vector3 _offset) 
-	: minPenalty(_minPenalty), maxPenalty(_maxPenalty), offset(_offset),
-	  grid(new Grid(gridSize.x, gridSize.y, _minPenalty, _maxPenalty)),
-	  nodeRadius(0), tree(NULL)
+AStar::AStar(float* nodes, int d1)
+	: m_worldOffset(Vec3(nodes[2], nodes[3], nodes[4])), m_grid(Grid<PathPoint>(nodes[5], nodes[6])),
+		m_minPenalty(nodes[7]), m_maxPenalty(nodes[8])
 {
+	ImportGrid(nodes, d1);
 }
 
-/// <summary>
-/// Initializes a new instance of AStar. From imported grid data.
-/// </summary>
-/// <param name="nodes">The nodes and essential data</param>
-/// <param name="d1">The dimension of the array</param>
-AStar::AStar(float* nodes, int d1) 
+void AStar::Clear()
 {
-	importGrid(nodes, d1);
+	m_grid = Grid<PathPoint>(0,0);
 }
 
-/// <summary>
-/// AStar destructor
-/// </summary>
-AStar::~AStar() 
+void AStar::AddGridNode(PathPoint node)
 {
-	if (tree != NULL) {
-		delete tree;
-		this->tree = NULL;
-	}
-	if (grid != NULL) {
-		delete grid;
-		this->grid = NULL;
-	}
+	m_grid(node.GetGridX(), node.GetGridY()) = PathPoint(node);
 }
 
-void AStar::clearGridNodes()
+void AStar::AddGridNodes(float* nodes, int d1)
 {
-	if (tree != NULL) {
-		this->tree->Clear();
-	}
-	if (grid != NULL) {
-		this->grid->clearGrid();
-	}
-}
-
-/// <summary>
-/// Adds a new PathNode to the astar grid (KDTree).
-/// </summary>
-/// <param point>The PathNode to be added</param>
-void AStar::addGridNode(tuple<Vector3, bool, int> point)
-{
-	if (tree != NULL) {
-		this->tree->AddNode(point);
-	}
-}
-
-/// <summary>
-/// Adds a new PathNode to the astar grid (Grid).
-/// </summary>
-/// <param name="node">The path node to add</param>
-void AStar::addGridNode(PathNode* node) 
-{
-	if (grid != NULL) {
-		this->grid->addToGrid(node->getGridX(), node->getGridY(), node);
-	}
-}
-
-/// <summary>
-/// Adds the grid nodes from the grid. (KDTree)
-/// </summary>
-/// <param points>The points to be added</param>
-void AStar::addGridNodes(deque<tuple<Vector3, bool, int>> points)
-{
-	if (tree->IsEmpty()) {
-		this->tree = new KDTree(points);
-	}
-	else {
-		while (!points.empty()) {
-			tuple<Vector3, bool, int> val = points.front();
-			tree->AddNode(val);
-			points.pop_front();
-		}
-	}
-}
-
-/// <summary>
-/// Adds the grid nodes from the grid. (Grid)
-/// </summary>
-/// <param points>The points to be added</param>
-void AStar::addGridNodes(float* nodes, int d1)
-{
-	for (int i = 0; i < (nodes[0] - 1) / 7; i++) {
+	for (int i = 0; i < (nodes[0] - 1) / 7; i++)
+	{
 		int base = (i * 7) + 1;
-		Vector2 pos = Vector2(nodes[base], nodes[base + 1]);
-		grid->addToGrid(pos.x, pos.y,
-			new PathNode(Vector3(nodes[base + 2], nodes[base + 3], nodes[base + 4]),
-				pos,
-				nodes[base + 5],
-				nodes[base + 6]));
+		Vec2 pos(nodes[base], nodes[base + 1]);
+		Vec3 coord(nodes[base + 2], nodes[base + 3], nodes[base + 4]);
+		m_grid(pos.x, pos.y) = PathPoint(coord, pos, nodes[base + 5], nodes[base + 6]);
 	}
 }
 
-/// <summary>
-/// Removes the grid node from the grid. (KD tree only)
-/// </summary>
-/// <param point>The world position</param>
-void AStar::removeGridNode(Vector3 point)
+PathPoint AStar::GetGridNode(Vec3 coordinate)
 {
-	tree->RemoveNode(point);
+	return m_grid(coordinate - m_worldOffset);
 }
 
-/// <summary>
-/// Removes the grid nodes from the grid. (KD tree only)
-/// </summary>
-/// <param points>The world positions</param>
-void AStar::removeGridNodes(deque<Vector3> points)
+PathPoint AStar::GetGridNode(unsigned xGrid, unsigned yGrid)
 {
-	while (!points.empty()) {
-		tree->RemoveNode(points.front());
-		points.pop_front();
-	}
+	return m_grid(xGrid, yGrid);
 }
 
-/// <summary>
-/// Gets the PathNode from the astar grid (KDTree).
-/// </summary>
-/// <param position>The world position</param>
-PathNode* AStar::getGridNode(Vector3 position)
+std::vector<PathPoint> AStar::GetNearestNeighbors(const Vec3& coordinate)
 {
-	if (tree != NULL) {
-		return tree->Nearest(position);
-	}
-	if (grid != NULL) {
-		return grid->nodeFromWorldPoint(position - offset);
-	}
-	return NULL;
+	return GetNearestNeighbors(m_grid(coordinate));
 }
 
-/// <summary>
-/// Gets the PathNode from the astar grid (Grid).
-/// </summary>
-/// <param position>The grid coordinates</param>
-PathNode* AStar::getGridNode(int gridX, int gridY)
+std::vector<PathPoint> AStar::GetNearestNeighbors(const PathPoint& center)
 {
-	if (grid != NULL) {
-		return grid->getGridNode(gridX, gridY);
-	}
-	return NULL;
+	return m_grid.GetNeighbors(center.GetGridX(), center.GetGridY());
 }
 
-/// <summary>
-/// Nearest neighbors of the astar grid.
-/// </summary>
-/// <param position>The center position to get neighbors from</param>
-vector<Vector3> AStar::getNearestNeighbors(Vector3 position) 
+const std::vector<Vec3> AStar::FindPath(const Vec3& startCoordinate, const Vec3& targetCoordinate)
 {
-	vector<PathNode*> neighbors;
-	if (grid != NULL) {
-		neighbors = grid->getNeighbors(grid->nodeFromWorldPoint(position - offset));
-	}
-	else if (tree != NULL) {
-		neighbors = tree->Nearest(position, nodeRadius * 2);
-	}
-	vector<Vector3> vecs;
-	for (PathNode* node : neighbors) {
-		vecs.push_back(node->position);
-	}
-	return vecs;
-}
+	unsigned safety = 0;
+	bool success = false;
+	PathPoint start = m_grid(startCoordinate);
+	PathPoint target = m_grid(targetCoordinate);
 
-/// <summary>
-/// Gets a path from the start point to the target point in the form of a list of world points.
-/// </summary>
-/// <param _startPosition>The start world position</param>
-/// <param _targetPosition>The target world position</param>
-const vector<Vector3> AStar::findPath(Vector3 _startPosition, Vector3 _targetPosition)
-{
-	int safety = 0;
-	bool path_success = false;
-	PathNode* startNode = getGridNode(_startPosition);
-	PathNode* targetNode = getGridNode(_targetPosition);
-
-	MinHeap<PathNode> openSet;
-	unordered_set<PathNode, HashFunction> closedSet;
-
-	if (startNode->getWalkable() && targetNode->getWalkable())
+	MinHeap<PathPoint> open;
+	HeapItem<PathPoint>* foundPoint;
+	std::unordered_set<PathPoint, PathPointHashFunction> closed;
+	closed.reserve(25);
+	if (start.GetWalkable() && target.GetWalkable())
 	{
 		// A* Path finding algorithm
-		openSet.Add(startNode);
+		open.Add(start);
 
-		while (openSet.size() > 0)
+		while (open.Size() > 0)
 		{
-			// This path is taking far to long to compute so just quit - handle differently?
+			// This path is taking too long to compute so finding failed
 			if (safety > 10000) { break; }
 
-			PathNode* currentNode = openSet.RemoveFirst();
-			closedSet.insert(*currentNode);
+			PathPoint current = open.RemoveFirst();
+			closed.emplace(current);
 
-			if (currentNode->operator==(targetNode)) 
+			if (current == target)
 			{
-				path_success = true;
+				target = *closed.find(target);
+				success = true;
 				break;
 			}
 
-			vector<PathNode*> neighbors;
-			if (grid != NULL) 
-			{
-				neighbors = grid->getNeighbors(currentNode);
-			}
-			else if (tree != NULL) 
-			{
-				neighbors = tree->Nearest(currentNode->position, nodeRadius * 2);
-			}
+			std::vector<PathPoint> neighbors = GetNearestNeighbors(current);
 
 			for (int i = 0; i < neighbors.size(); i++)
 			{
-				PathNode* neighbor = neighbors.at(i);
-				if (!neighbor->getWalkable() || closedSet.find(*neighbor) != closedSet.end()) 
-				{
-					continue;
-				}
+				PathPoint neighbor = neighbors[i];
 
-				int newMoveCostToNeighbor = currentNode->getGCost() + currentNode->ManhattenDistanceTo(*neighbor) + neighbor->getMovementPenalty();
-				if (!openSet.Contains(neighbor) || newMoveCostToNeighbor < neighbor->getGCost()) 
+				if (!neighbor.GetWalkable() || closed.find(neighbor) != closed.end()) { continue; }
+
+				int newMoveCost = current.GetGCost() + current.ManhattenDistanceTo(neighbor) + neighbor.GetMovementPenalty();
+				foundPoint = open.Find(neighbor);
+
+				if (foundPoint != NULL && newMoveCost < foundPoint->GetItemPtr()->GetGCost())
 				{
-					neighbor->setGCost(newMoveCostToNeighbor);
-					neighbor->setHCost(neighbor->ManhattenDistanceTo(*targetNode));
-					neighbor->setParent(currentNode);
-					if (!openSet.Contains(neighbor)) 
-					{
-						openSet.Add(neighbor);
-					}
-					else 
-					{
-						openSet.UpdateItem(neighbor);
-					}
+					PathPoint* ptr = foundPoint->GetItemPtr();
+					ptr->SetGCost(newMoveCost);
+					ptr->SetHCost(neighbor.ManhattenDistanceTo(target));
+					ptr->SetParent(&(*closed.find(current)));
+					open.UpdateItem(foundPoint);
+				}
+				else if (foundPoint == NULL)
+				{
+					neighbor.SetGCost(newMoveCost);
+					neighbor.SetHCost(neighbor.ManhattenDistanceTo(target));
+					neighbor.SetParent(&(*closed.find(current)));
+					open.Add(neighbor);
 				}
 			}
 			safety++;
 		}
 	}
-	if (path_success) 
+	if (success)
 	{
-		vector<Vector3> path(retracePath(*startNode, *targetNode));
-
-		CleanUp(openSet, closedSet);
-		return path;
+		std::vector<Vec3> temp = RetracePath(start, target);
+		return temp;
 	}
-	else {
-		CleanUp(openSet, closedSet);
-		return {};
-	}
+	return {};
 }
 
-/// <summary>
-/// Retraces the path.
-/// </summary>
-/// <param _startNode>The start node</param>
-/// <param _endNode>The end node</param>
-const vector<Vector3> AStar::retracePath(PathNode _startNode, PathNode _endNode)
+const std::vector<Vec3> AStar::RetracePath(PathPoint start, PathPoint end)
 {
-	vector<PathNode> pathNodes = vector<PathNode>();
-	PathNode currentNode = _endNode;
-	while (currentNode.operator!=(&_startNode)) 
+	std::vector<PathPoint> nodes;
+	PathPoint& current = end;
+	while (current != start)
 	{
-		pathNodes.push_back(currentNode);
-		currentNode = *currentNode.getParent();
+		nodes.emplace_back(current);
+		current = *current.GetParent();
 	}
 
-	vector<Vector3> waypoints = simplifyPath(pathNodes);
-	reverse(waypoints.begin(), waypoints.end());
-	return waypoints;
-}
-
-/// <summary>
-/// Simplifies the passed path list of world points. 
-/// Removing duplicates of same slope.
-/// </summary>
-/// <param _pathNodes>The path or the list of nodes</param>
-const vector<Vector3> AStar::simplifyPath(vector<PathNode> _pathNodes)
-{
-	vector<Vector3> waypoints = vector<Vector3>();
-	float directionOld = -5; // An impossible direction
-	for (size_t i = 0; i < _pathNodes.size(); i++)
+	std::vector<Vec3> waypoints;
+	waypoints.reserve(nodes.size());
+	float oldDir = FLT_EPSILON; // Impossible direction
+	for (size_t i = 0; i < nodes.size(); i++)
 	{
-		if (i == 0) {
-			waypoints.push_back(_pathNodes.at(i).position);
+		if (i == 0)
+		{
+			waypoints.push_back(nodes[i].GetPosition());
 			continue;
 		}
 
-		PathNode prior = _pathNodes.at(i - 1);
-		PathNode current = _pathNodes.at(i);
-		float directionNew = prior.position.DirectionTo(current.position);
-
-		if (!(abs(directionOld - directionNew) < FLT_EPSILON))
+		float newDir = nodes[i - 1].GetPosition().DirectionTo(nodes[i].GetPosition());
+		if (!(abs(oldDir - newDir) < FLT_EPSILON))
 		{
-			waypoints.push_back(_pathNodes.at(i).position);
+			waypoints.push_back(nodes[i].GetPosition());
 		}
-		directionOld = directionNew;
+		oldDir = newDir;
 	}
+	std::reverse(waypoints.begin(), waypoints.end());
 	return waypoints;
 }
 
-/// <summary>
-/// Converts the grid into a string useful for debugging,
-/// currently only applicable for kd tree.
-/// </summary>
-/// <returns>The string of the kd tree</returns>
-string AStar::GridToString()
+const std::tuple<int, int> AStar::BlurWeights(int size)
 {
-	return tree->ToString();
-}
+	int kernelSize = size * 2 + 1;
+	int kernelExtents = (kernelSize - 1) / 2.0f;
 
-// TODO: Implement blurring with the kd tree points.
+	int gridWidth = m_grid.GetWidth();
+	int gridHeight = m_grid.GetHeight();
 
-/// <summary>
-/// Blurs the movement penalties of the grid.
-/// </summary>
-/// <param _blurSize>The kernel blur size</param>
-const tuple<int, int> AStar::blurWeights(int _blurSize)
-{
-	if (grid != NULL) {
-		return grid->blurPenaltyMap(_blurSize);
+	Matrix<int> horizontalPass(gridWidth, gridHeight);
+	Matrix<int> verticalPass(gridWidth, gridHeight);
+
+	for (int y = 0; y < gridHeight; y++)
+	{
+		for (int x = -kernelExtents; x <= kernelExtents; x++)
+		{
+			int sampleX = clamp(x, 0, kernelExtents);
+			horizontalPass(0, y) += m_grid(sampleX, y).GetMovementPenalty();
+		}
+
+		for (int x = 1; x < gridWidth; x++)
+		{
+			int removeIndex = clamp(x - kernelExtents - 1, 0, gridWidth);
+			int addIndex = clamp(x + kernelExtents, 0, gridWidth - 1);
+			horizontalPass(x, y) = horizontalPass(x - 1, y)
+				- m_grid(removeIndex, y).GetMovementPenalty()
+				+ m_grid(addIndex, y).GetMovementPenalty();
+		}
 	}
-	return make_tuple(minPenalty, maxPenalty);
-}
+	for (int x = 0; x < gridWidth; x++)
+	{
+		for (int y = -kernelExtents; y <= kernelExtents; y++)
+		{
+			int sampleY = clamp(y, 0, kernelExtents);
+			verticalPass(x, 0) += horizontalPass(x, sampleY);
+		}
+		int blurredPenalty = std::round(verticalPass(x, 0) / (float)(kernelSize * kernelSize));
+		m_grid(x, 0).SetMovementPenalty(blurredPenalty);
+		for (int y = 1; y < gridHeight; y++)
+		{
+			int removeIndex = clamp(y - kernelExtents - 1, 0, gridHeight);
+			int addIndex = clamp(y + kernelExtents, 0, gridHeight - 1);
 
-/// <summary>
-/// Exports the essential values of the grid for saving into
-/// a file.
-/// </summary>
-/// <returns>A tuple of nodes, offset, size, and penalties</returns>
-tuple<vector<PathNode>, Vector3, int, int, int, int> AStar::exportGrid()
-{
-	if (grid != NULL) {
-		return make_tuple(grid->exportGrid(), offset, 
-						  grid->gridSizeX, grid->gridSizeY,
-						  grid->minPenalty, grid->maxPenalty);
+			verticalPass(x, y) = verticalPass(x, y - 1)
+				- horizontalPass(x, removeIndex)
+				+ horizontalPass(x, addIndex);
+			blurredPenalty = std::round(verticalPass(x, y) / (float)(kernelSize * kernelSize));
+			m_grid(x, y).SetMovementPenalty(blurredPenalty);
+
+			if (blurredPenalty > m_maxPenalty)
+			{
+				m_maxPenalty = blurredPenalty;
+			}
+			if (blurredPenalty < m_minPenalty)
+			{
+				m_minPenalty = blurredPenalty;
+			}
+		}
 	}
-	return make_tuple(vector<PathNode>(), Vector3(), 0, 0, 0, 0);
+	return std::make_tuple(m_minPenalty, m_maxPenalty);
 }
 
-/// <summary>
-/// Imports a grid from the passed node and essential values.
-/// </summary>
-/// <param name="nodes">The essential and nodes values</param>
-/// <param name="d1">The dimension of the array</param>
-void AStar::importGrid(float* nodes, int d1)
+const std::tuple<std::vector<PathPoint>, Vec3, int, int, int, int> AStar::ExportGrid()
 {
-	if (grid != NULL) { delete grid; }
-	offset = Vector3(nodes[2], nodes[3], nodes[4]);
-	this->grid = new Grid(nodes[5], nodes[6], nodes[7], nodes[8]);
-	
-	for (int i = 0; i < (nodes[0] - 9) / 7; i++) 
+	return make_tuple(m_grid.Export(), m_worldOffset,
+					  m_grid.GetWidth(), m_grid.GetHeight(),
+					  m_minPenalty, m_maxPenalty);
+}
+
+void AStar::ImportGrid(float* nodes, int d1)
+{
+	for (int i = 0; i < (nodes[0] - 9) / 7; i++)
 	{
 		int base = 9 + (i * 7);
-		Vector2 pos = Vector2(nodes[base], nodes[base + 1]);
-		grid->addToGrid(pos.x, pos.y,
-						new PathNode(Vector3(nodes[base + 2], nodes[base + 3], nodes[base + 4]), 
-										     pos, 
-											 nodes[base + 5], 
-											 nodes[base + 6]));
+		Vec2 pos = Vec2(nodes[base], nodes[base + 1]);
+		Vec3 coord = Vec3(nodes[base + 2], nodes[base + 3], nodes[base + 4]);
+		PathPoint& point = m_grid(pos.x, pos.y);
+		point.SetGridCoord(pos);
+		point.SetPosition(coord);
+		point.SetWalkable(nodes[base + 5]);
+		point.SetMovementPenalty(nodes[base + 6]);
 	}
 }

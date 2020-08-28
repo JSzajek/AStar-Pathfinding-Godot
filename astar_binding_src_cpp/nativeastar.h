@@ -5,11 +5,15 @@
 #else
 #define NATIVEASTAR_H __declspec(dllimport)
 
+#include "Linker.h"
+
 // Initialize the native class.
 extern "C" NATIVEASTAR_H void native_lib_init();
 
 // Destructor for the native class.
 extern "C" NATIVEASTAR_H void native_lib_destroy();
+
+extern "C" NATIVEASTAR_H void ReleaseMemory(void* arrayPtr);
 
 // Sets up the relevent parameters involved in the astar search - Tree
 extern "C" NATIVEASTAR_H void setup(float _nodeRadius, int _minPenalty, int _maxPenalty);

@@ -1,0 +1,42 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://_Scripts/_astar/GridAStar.cs" type="Script" id=1]
+[ext_resource path="res://_Scripts/PreloadableScene.cs" type="Script" id=2]
+[ext_resource path="res://_Scripts/Ground.cs" type="Script" id=3]
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 4.65233, 0.27626, 3.33791 )
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="ConcavePolygonShape" id=3]
+data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1 )
+
+[node name="Main" type="Node"]
+script = ExtResource( 2 )
+
+[node name="AStar_Linker" type="Spatial" parent="."]
+script = ExtResource( 1 )
+VisualizeGrid = true
+
+[node name="BoundingBox" type="CollisionShape" parent="AStar_Linker"]
+shape = SubResource( 2 )
+
+[node name="Debug" type="Spatial" parent="AStar_Linker"]
+
+[node name="Spatial" type="Spatial" parent="."]
+script = ExtResource( 3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Spatial"]
+transform = Transform( 7.82281, 0, 0, 0, 1, 0, 0, 0, 9.18633, 0, -2.36455, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="StaticBody" type="StaticBody" parent="Spatial/MeshInstance"]
+collision_layer = 80
+
+[node name="CollisionShape" type="CollisionShape" parent="Spatial/MeshInstance/StaticBody"]
+shape = SubResource( 3 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7 )

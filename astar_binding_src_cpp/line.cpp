@@ -1,84 +1,56 @@
-#include"pch.h"
-#include "line.hpp"
+#include "pch.h"
 
-using namespace std;
-using namespace astar;
+#include "Line.h"
 
-/// <summary>
-/// Initializes a new default instance of Line
-/// </summary>
-Line::Line()
+Line::Line(Vec2 pointOnLine, Vec2 pointPerpToLine)
 {
-	Line(Vector2(), Vector2());
-}
+	float dx = pointOnLine.x - pointPerpToLine.x;
+	float dy = pointOnLine.y - pointPerpToLine.y;
 
-/// <summary>
-/// Initializes a new instance of Line
-/// </summary>
-/// <param _pointOnLine>The point on the line</param>
-/// <param _pointPerpToLine>The point perpendicular to the line</param>
-Line::Line(Vector2 _pointOnLine, Vector2 _pointPerpToLine)
-{
-	float dx = _pointOnLine.x - _pointPerpToLine.x;
-	float dy = _pointOnLine.y - _pointPerpToLine.y;
-
-	if (dx == 0) {
-		this->perpendicularGradient = VERT_LINE_GRAD;
+	if (dx == 0) 
+	{
+		m_perpendicularGradient = VERT_LINE_GRAD;
 	}
-	else {
-		this->perpendicularGradient = dy / dx;
+	else 
+	{
+		m_perpendicularGradient = dy / dx;
 	}
 
-	if (this->perpendicularGradient == 0) {
-		this->gradient = VERT_LINE_GRAD;
+	if (m_perpendicularGradient == 0) 
+	{
+		m_gradient = VERT_LINE_GRAD;
 	}
-	else {
-		this->gradient = -1.0f / perpendicularGradient;
+	else 
+	{
+		m_gradient = -1.0f / m_perpendicularGradient;
 	}
 
 	//this->perpendicularGradient = dx == 0 ? VERT_LINE_GRAD : dy / dx;
 	//this->gradient = perpendicularGradient == 0 ? VERT_LINE_GRAD : -1.0f / perpendicularGradient;
 
-	this->yIntercept = _pointOnLine.y - gradient * _pointOnLine.x;
-	pointOnLine1 = _pointOnLine;
-	pointOnLine2 = _pointOnLine + Vector2(1, gradient);
+	m_yIntercept = pointOnLine.y - m_gradient * pointOnLine.x;
+	m_pointOnLine1 = pointOnLine;
+	m_pointOnLine2 = pointOnLine + Vec2(1, m_gradient);
 
-	this->approachSide = false;
-	this->approachSide = getSide(_pointPerpToLine);
+	m_approachSide = false;
+	m_approachSide = GetSide(pointPerpToLine);
 }
 
-/// <summary>
-/// Line destructor
-/// </summary>
-Line::~Line() { }
-
-/// <summary>
-/// Gets whether the point is on side of the Line.
-/// </summary>
-/// <param point>The point</param>
-bool Line::getSide(Vector2 point)
+const bool Line::GetSide(Vec2 point)
 {
-	return (point.x - pointOnLine1.x) * (pointOnLine2.y - pointOnLine1.y) 
-				> (point.y - pointOnLine1.y) * (pointOnLine2.x - pointOnLine1.x);
+	return (point.x - m_pointOnLine1.x) * (m_pointOnLine2.y - m_pointOnLine1.y)
+				> (point.y - m_pointOnLine1.y) * (m_pointOnLine2.x - m_pointOnLine1.x);
 }
 
-/// <summary>
-/// Gets whether the point is has crossed the Line.
-/// </summary>
-/// <param point>The point</param>
-bool Line::hasCrossedLine(Vector2 point)
+const bool Line::HasCrossedLine(Vec2 point)
 {
-	return getSide(point) != approachSide;
+	return GetSide(point) != m_approachSide;
 }
 
-/// <summary>
-/// Gets whether the distance of the Line from the point.
-/// </summary>
-/// <param point>The point</param>
-float Line::distanceFromPoint(Vector2 point)
+const float Line::DistanceFromPoint(Vec2 point)
 {
-	float yInterceptPerp = point.y - perpendicularGradient * point.x;
-	float intersectX = (yInterceptPerp - yIntercept) / (gradient - perpendicularGradient);
-	float intersectY = gradient * intersectX + yIntercept;
-	return point.DistanceTo(Vector2(intersectX, intersectY));
+	float yInterceptPerp = point.y - m_perpendicularGradient * point.x;
+	float intersectX = (yInterceptPerp - m_yIntercept) / (m_gradient - m_perpendicularGradient);
+	float intersectY = m_gradient * intersectX + m_yIntercept;
+	return point.DistanceTo(Vec2(intersectX, intersectY));
 }

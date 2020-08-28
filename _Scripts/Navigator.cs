@@ -1,10 +1,8 @@
-using Godot;
-
 /// <summary>
 /// Singleton class representing a navigator holding connections
 /// to all vital controller classes hosted within the application.
 /// </summary>
-public class Navigator : Node {
+public class Navigator : FreeingNode {
 
     #region Fields
 

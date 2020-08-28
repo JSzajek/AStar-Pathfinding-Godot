@@ -1,4 +1,3 @@
-using Godot;
 using System.Collections.Generic;
 using AStar;
 
@@ -6,7 +5,7 @@ using AStar;
 /// DllLoader class representing loader for loading
 /// in external dll libraries
 /// </summary>
-public class DllLoader : Node
+public class DllLoader : FreeingNode
 {
     #region Fields
 
@@ -50,6 +49,7 @@ public class DllLoader : Node
     /// </summary>
     public override void _ExitTree()
     {
+        base._ExitTree();
         Destroy();
     }
 

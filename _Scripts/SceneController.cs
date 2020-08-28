@@ -7,7 +7,7 @@ using System;
 /// Singleton class representing a controller in charge of 
 /// scene changing and loading.
 /// </summary>
-public class SceneController : Node
+public class SceneController : FreeingNode
 {
 	#region Constants
 

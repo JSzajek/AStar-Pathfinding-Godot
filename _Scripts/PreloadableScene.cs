@@ -6,7 +6,7 @@ using System.Linq;
 /// Class representing a scene requiring pre-loading before
 /// the player enters the scene.
 /// </summary>
-public class PreloadableScene : Node
+public class PreloadableScene : FreeingNode
 {
     #region Fields
 

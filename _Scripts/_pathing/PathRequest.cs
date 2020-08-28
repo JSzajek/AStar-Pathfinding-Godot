@@ -3,12 +3,17 @@ using System;
 
 namespace Pathing
 {
+    
+
     /// <summary>
     /// Struct representing a path request
     /// </summary>
     public struct PathRequest
     {
         #region Fields
+
+        // Inverse Vector in Z-axis to accommodate for negative forward direction
+        private static readonly Vector3 Inverse = new Vector3(1,1,-1);
 
         public Vector3 pathStart, pathEnd;
         public bool smooth;
@@ -29,8 +34,8 @@ namespace Pathing
         public PathRequest(Action<Path, bool> callback, Vector3 start, Vector3 end, int hash)
         {
             this.hash = hash;
-            this.pathStart = start;
-            this.pathEnd = end;
+            this.pathStart = start * Inverse;
+            this.pathEnd = end * Inverse;
             this.callback = callback;
             smooth = false;
             stopDist = turnDist = 0.0f;

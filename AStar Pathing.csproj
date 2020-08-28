@@ -70,6 +70,7 @@
     <Compile Include="_Scripts\Chunk.cs" />
     <Compile Include="_Scripts\VisibleEntity.cs" />
     <Compile Include="_Scripts\Navigator.cs" />
+    <Compile Include="_Scripts\FreeingNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="_Scripts\_extensions\MeshInstanceExtension.cs" />

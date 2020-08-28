@@ -42,6 +42,9 @@ namespace AStar
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void importGrid([In][MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.R4)] float[] points, int d1);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void ReleaseMemory(IntPtr arrayPtr);
+
         #endregion Delegates
 
         #region Fields
@@ -55,6 +58,8 @@ namespace AStar
         private blurWeights _blurWeights;
         private exportGrid _exportGrid;
         private importGrid _importGrid;
+
+        private ReleaseMemory _releaseMemory;
 
         #endregion Fields
 
@@ -76,6 +81,9 @@ namespace AStar
 
             _exportGrid = (exportGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "exportGrid"), typeof(exportGrid));
             _importGrid = (importGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "importGrid"), typeof(importGrid));
+
+
+            _releaseMemory = (ReleaseMemory)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "ReleaseMemory"), typeof(ReleaseMemory));
         }
 
         #endregion Constructors
@@ -134,6 +142,8 @@ namespace AStar
             IntPtr pointPtr = _getGridPoint(gridX, gridY);
             float[] arr = new float[5];
             Marshal.Copy(pointPtr, arr, 0, 5);
+            _releaseMemory(pointPtr);
+
             return (new Vector3(arr[0], arr[1], arr[2]), (int)arr[3], (int)arr[4] == 1);
         }
 
@@ -162,6 +172,8 @@ namespace AStar
 
                 float[] points = new float[size];
                 Marshal.Copy(pathPtr, points, 0, size);
+
+                _releaseMemory(pathPtr);
 
                 if (request.smooth)
                 {
@@ -200,6 +212,8 @@ namespace AStar
             var blurPtr = _blurWeights(blurSize);
             int[] returnArray = new int[2];
             Marshal.Copy(blurPtr, returnArray, 0, 2);
+            _releaseMemory(blurPtr);
+
             return (returnArray[0], returnArray[1]);
         }
 
@@ -213,6 +227,7 @@ namespace AStar
 
             float[] sizeArray = new float[1];
             Marshal.Copy(resultPtr, sizeArray, 0, 1);
+
             int size = (int)sizeArray[0];
 
             if (size == 1)
@@ -222,6 +237,7 @@ namespace AStar
 
             float[] exportVals = new float[size + 1];
             Marshal.Copy(resultPtr, exportVals, 0, size + 1);
+            _releaseMemory(resultPtr);
 
             using (var writer = new BinaryFile(filepath, BinaryFile.BinaryMode.WRITE))
             {

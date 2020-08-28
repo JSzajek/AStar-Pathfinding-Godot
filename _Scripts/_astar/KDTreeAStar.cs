@@ -43,7 +43,8 @@ namespace AStar
             AStarLinker = Navigator.DllLoader.GetKDTreeAStarLinker();
 
             // Initialize path request manager
-            pathRequestManager = new PathRequestManager(AStarLinker, AddNode);
+            pathRequestManager = new PathRequestManager(AStarLinker);
+            AddChild(pathRequestManager);
 
             // Create Path Update Timer
             pathTimer = new Timer();

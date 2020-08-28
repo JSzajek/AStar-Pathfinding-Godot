@@ -10,7 +10,7 @@
 [ext_resource path="res://_Scripts/Ground.cs" type="Script" id=8]
 
 [sub_resource type="BoxShape" id=1]
-extents = Vector3( 18, 0.25, 14 )
+extents = Vector3( 18, 0.25, 13.5 )
 
 [node name="Main" type="Node"]
 script = ExtResource( 7 )
@@ -19,12 +19,12 @@ script = ExtResource( 7 )
 script = ExtResource( 1 )
 HeightClearance = 3.0
 VisualAlpha = 0.8
-NodeRadius = 0.5
 BlurWeights = true
 BlurSize = 5
 VisualizeGrid = true
 
 [node name="BoundingBox" type="CollisionShape" parent="AStar_Linker"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5 )
 shape = SubResource( 1 )
 disabled = true
 
