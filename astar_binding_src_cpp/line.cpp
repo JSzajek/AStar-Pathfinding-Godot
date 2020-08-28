@@ -36,12 +36,6 @@ Line::Line(Vec2 pointOnLine, Vec2 pointPerpToLine)
 	m_approachSide = GetSide(pointPerpToLine);
 }
 
-const bool Line::GetSide(Vec2 point)
-{
-	return (point.x - m_pointOnLine1.x) * (m_pointOnLine2.y - m_pointOnLine1.y)
-				> (point.y - m_pointOnLine1.y) * (m_pointOnLine2.x - m_pointOnLine1.x);
-}
-
 const bool Line::HasCrossedLine(Vec2 point)
 {
 	return GetSide(point) != m_approachSide;
@@ -53,4 +47,10 @@ const float Line::DistanceFromPoint(Vec2 point)
 	float intersectX = (yInterceptPerp - m_yIntercept) / (m_gradient - m_perpendicularGradient);
 	float intersectY = m_gradient * intersectX + m_yIntercept;
 	return point.DistanceTo(Vec2(intersectX, intersectY));
+}
+
+const bool Line::GetSide(Vec2 point)
+{
+	return (point.x - m_pointOnLine1.x) * (m_pointOnLine2.y - m_pointOnLine1.y)
+				> (point.y - m_pointOnLine1.y) * (m_pointOnLine2.x - m_pointOnLine1.x);
 }

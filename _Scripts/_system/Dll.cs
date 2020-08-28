@@ -10,6 +10,9 @@ public class Dll
     #region Delegates
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    protected delegate void releaseMemory(IntPtr arrayPtr);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate void nativeLibDestroy();
 
     #endregion Delegates
@@ -17,6 +20,7 @@ public class Dll
     #region Fields
 
     protected IntPtr pDll;
+    protected releaseMemory _releaseMemory;
 	private nativeLibDestroy _nativeLibDestroy;
 
     #endregion Fields
@@ -31,6 +35,7 @@ public class Dll
     {
         Load(FileSystem.EnsureFilePath(path));
 		_nativeLibDestroy = (nativeLibDestroy)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "native_lib_destroy"), typeof(nativeLibDestroy));
+        _releaseMemory = (releaseMemory)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "releaseMemory"), typeof(releaseMemory));
     }
 
     #endregion Constructors

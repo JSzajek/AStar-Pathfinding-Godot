@@ -4,8 +4,8 @@
 
 AStar::AStar(Vec2 gridDimension, int minPenalty, int maxPenalty, Vec3 offset)
 	: m_minPenalty(minPenalty), m_maxPenalty(maxPenalty),
-	m_grid(Grid<PathPoint>((int)gridDimension.x, (int)gridDimension.y)),
-	m_worldOffset(offset)
+		m_grid(Grid<PathPoint>((int)gridDimension.x, (int)gridDimension.y)),
+		m_worldOffset(offset)
 {
 }
 
@@ -21,28 +21,28 @@ void AStar::Clear()
 	m_grid = Grid<PathPoint>(0,0);
 }
 
-void AStar::AddGridNode(PathPoint node)
+void AStar::AddGridPoint(PathPoint point)
 {
-	m_grid(node.GetGridX(), node.GetGridY()) = PathPoint(node);
+	m_grid(point.GetGridX(), point.GetGridY()) = PathPoint(point);
 }
 
-void AStar::AddGridNodes(float* nodes, int d1)
+void AStar::AddGridPoints(float* points, int d1)
 {
-	for (int i = 0; i < (nodes[0] - 1) / 7; i++)
+	for (int i = 0; i < (points[0] - 1) / 7; i++)
 	{
 		int base = (i * 7) + 1;
-		Vec2 pos(nodes[base], nodes[base + 1]);
-		Vec3 coord(nodes[base + 2], nodes[base + 3], nodes[base + 4]);
-		m_grid(pos.x, pos.y) = PathPoint(coord, pos, nodes[base + 5], nodes[base + 6]);
+		Vec2 pos(points[base], points[base + 1]);
+		Vec3 coord(points[base + 2], points[base + 3], points[base + 4]);
+		m_grid(pos.x, pos.y) = PathPoint(coord, pos, points[base + 5], points[base + 6]);
 	}
 }
 
-PathPoint AStar::GetGridNode(Vec3 coordinate)
+PathPoint AStar::GetGridPoint(Vec3 coordinate)
 {
 	return m_grid(coordinate - m_worldOffset);
 }
 
-PathPoint AStar::GetGridNode(unsigned xGrid, unsigned yGrid)
+PathPoint AStar::GetGridPoint(unsigned xGrid, unsigned yGrid)
 {
 	return m_grid(xGrid, yGrid);
 }
@@ -226,17 +226,17 @@ const std::tuple<std::vector<PathPoint>, Vec3, int, int, int, int> AStar::Export
 					  m_minPenalty, m_maxPenalty);
 }
 
-void AStar::ImportGrid(float* nodes, int d1)
+void AStar::ImportGrid(float* points, int d1)
 {
-	for (int i = 0; i < (nodes[0] - 9) / 7; i++)
+	for (int i = 0; i < (points[0] - 9) / 7; i++)
 	{
 		int base = 9 + (i * 7);
-		Vec2 pos = Vec2(nodes[base], nodes[base + 1]);
-		Vec3 coord = Vec3(nodes[base + 2], nodes[base + 3], nodes[base + 4]);
+		Vec2 pos = Vec2(points[base], points[base + 1]);
+		Vec3 coord = Vec3(points[base + 2], points[base + 3], points[base + 4]);
 		PathPoint& point = m_grid(pos.x, pos.y);
 		point.SetGridCoord(pos);
 		point.SetPosition(coord);
-		point.SetWalkable(nodes[base + 5]);
-		point.SetMovementPenalty(nodes[base + 6]);
+		point.SetWalkable(points[base + 5]);
+		point.SetMovementPenalty(points[base + 6]);
 	}
 }

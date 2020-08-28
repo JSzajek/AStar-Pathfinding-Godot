@@ -1,16 +1,14 @@
 #include "pch.h"
 #include "Linker.h"
 
-void Linker::DestroyImpl()
-{
-	// To Do implement necessary memory managment
-}
-
 Linker::Linker()
 	: astar(Vec2(), 0, 0, Vec3())
 {
-	debugFile = std::fstream();
-	debugFile.open("astarlinker_debug.txt", std::fstream::in | std::fstream::out | std::fstream::trunc);
+}
+
+void Linker::DestroyImpl()
+{
+	// To Do implement necessary memory managment
 }
 
 void Linker::SetUpImpl(Vec2 gridSize, int minPenalty, int maxPenalty, Vec3 worldOffset)
@@ -25,25 +23,25 @@ void Linker::ClearGridImpl()
 
 void Linker::AddGridPointImpl(Vec3 coordinate, Vec2 gridCoord, bool walkable, int movementPenalty)
 {
-	astar.AddGridNode(PathPoint(coordinate, gridCoord, walkable, movementPenalty));
+	astar.AddGridPoint(PathPoint(coordinate, gridCoord, walkable, movementPenalty));
 }
 
 void Linker::AddGridPointsImpl(float* points, int d1)
 {
-	astar.AddGridNodes(points, d1);
+	astar.AddGridPoints(points, d1);
 }
 
 float* Linker::GetGridPointImpl(Vec3 coordinate)
 {
-	return GetGridPointImpl(astar.GetGridNode(coordinate));
+	return ConvertGridPoint(astar.GetGridPoint(coordinate));
 }
 
 float* Linker::GetGridPointImpl(unsigned int xGrid, unsigned int yGrid)
 {
-	return GetGridPointImpl(astar.GetGridNode(xGrid, yGrid));
+	return ConvertGridPoint(astar.GetGridPoint(xGrid, yGrid));
 }
 
-float* Linker::GetGridPointImpl(const PathPoint& point)
+float* Linker::ConvertGridPoint(const PathPoint& point)
 {
 	Vec3 pos = point.GetPosition();
 	return new float[5]

@@ -3,18 +3,20 @@
 #include "PathPoint.h"
 
 PathPoint::PathPoint()
+	: m_worldCoord(Vec3()), m_gridCoord(Vec2()), m_walkable(false), 
+		m_movePenalty(0), m_parent(NULL), m_gCost(0), m_hCost(0)
 {
 }
 
 PathPoint::PathPoint(Vec3 worldCoord, Vec2 gridCoord, bool walkable, int movementPenalty)
 	: m_worldCoord(worldCoord), m_gridCoord(gridCoord), m_walkable(walkable),
-	m_movePenalty(movementPenalty), m_parent(NULL), gCost(0), hCost(0)
+		m_movePenalty(movementPenalty), m_parent(NULL), m_gCost(0), m_hCost(0)
 {
 }
 
 PathPoint::PathPoint(const PathPoint& other)
-	: m_worldCoord(other.GetPosition()), m_gridCoord(other.GetGridCoord()), m_walkable(other.GetWalkable()),
-	m_movePenalty(other.GetMovementPenalty()), m_parent(other.GetParent()), gCost(other.GetGCost()), hCost(other.GetHCost())
+	: m_worldCoord(other.GetPosition()), m_gridCoord(Vec2(other.GetGridX(), other.GetGridY())), m_walkable(other.GetWalkable()),
+		m_movePenalty(other.GetMovementPenalty()), m_parent(other.GetParent()), m_gCost(other.GetGCost()), m_hCost(other.GetHCost())
 {
 }
 
@@ -30,14 +32,14 @@ const float PathPoint::ManhattenDistanceTo(const PathPoint& otherNode)
 
 const bool PathPoint::operator<(const PathPoint& other) const
 {
-	int compare = fCost() - other.fCost();
-	return compare == 0 ? hCost - other.GetHCost() < 0 : compare < 0;
+	int compare = FCost() - other.FCost();
+	return compare == 0 ? m_hCost - other.GetHCost() < 0 : compare < 0;
 }
 
 const bool PathPoint::operator>(const PathPoint& other) const
 {
-	int compare = fCost() - other.fCost();
-	return compare == 0 ? hCost - other.GetHCost() > 0 : compare > 0;
+	int compare = FCost() - other.FCost();
+	return compare == 0 ? m_hCost - other.GetHCost() > 0 : compare > 0;
 }
 
 const bool PathPoint::operator==(const PathPoint& comparison) const

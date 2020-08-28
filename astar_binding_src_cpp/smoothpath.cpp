@@ -4,7 +4,8 @@
 #include "SmoothPath.h"
 
 SmoothPath::SmoothPath(std::vector<Vec3> points, Vec3 start, float turnDist, float stoppingDist)
-	: m_lookPoints(points), m_turnBoundaries(std::vector<Line>()), m_finishLineIndex(points.size() - 1)
+	: m_lookPoints(points), m_turnBoundaries(std::vector<Line>()), 
+		m_finishLineIndex(points.size() - 1), m_slowDownIndex(0)
 {
 	Vec2 prevPoint = start.ToVec2();
 	for (int i = 0; i < m_lookPoints.size(); i++)
@@ -27,14 +28,4 @@ SmoothPath::SmoothPath(std::vector<Vec3> points, Vec3 start, float turnDist, flo
 			break;
 		}
 	}
-}
-
-float SmoothPath::DistanceFromPoint(int index, Vec2 position)
-{
-	return m_turnBoundaries[index].DistanceFromPoint(position);
-}
-
-bool SmoothPath::CrossedTurnBoundary(int index, Vec2 position)
-{
-	return m_turnBoundaries[index].HasCrossedLine(position);
 }

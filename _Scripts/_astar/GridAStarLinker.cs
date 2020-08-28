@@ -42,9 +42,6 @@ namespace AStar
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void importGrid([In][MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.R4)] float[] points, int d1);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void ReleaseMemory(IntPtr arrayPtr);
-
         #endregion Delegates
 
         #region Fields
@@ -58,8 +55,6 @@ namespace AStar
         private blurWeights _blurWeights;
         private exportGrid _exportGrid;
         private importGrid _importGrid;
-
-        private ReleaseMemory _releaseMemory;
 
         #endregion Fields
 
@@ -83,7 +78,6 @@ namespace AStar
             _importGrid = (importGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "importGrid"), typeof(importGrid));
 
 
-            _releaseMemory = (ReleaseMemory)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "ReleaseMemory"), typeof(ReleaseMemory));
         }
 
         #endregion Constructors
