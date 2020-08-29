@@ -23,7 +23,7 @@ Image utilized for background in menu screen can be found [here](https://www.cli
 
 ### Task List: ###
 - [x] Fix path smoothing
-- [ ] Fix Memory leaks in dlls
+- [x] Fix Memory leaks in dlls
 - [ ] Implement logging system
 - [ ] Add layered map support (under and over - eg. rock cliff in grid scene)
 - [x] Add naive form of 'navmeshs' ~~(simplified quadrants to speed up path finding)~~
