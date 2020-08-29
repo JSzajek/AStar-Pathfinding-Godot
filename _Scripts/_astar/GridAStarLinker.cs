@@ -77,7 +77,7 @@ namespace AStar
             _exportGrid = (exportGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "exportGrid"), typeof(exportGrid));
             _importGrid = (importGrid)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "importGrid"), typeof(importGrid));
 
-
+            _releaseMemory = (releaseMemory)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "releaseMemory"), typeof(releaseMemory));
         }
 
         #endregion Constructors

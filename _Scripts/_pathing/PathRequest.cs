@@ -12,9 +12,6 @@ namespace Pathing
     {
         #region Fields
 
-        // Inverse Vector in Z-axis to accommodate for negative forward direction
-        private static readonly Vector3 Inverse = new Vector3(1,1,-1);
-
         public Vector3 pathStart, pathEnd;
         public bool smooth;
         public float turnDist, stopDist;
@@ -34,8 +31,8 @@ namespace Pathing
         public PathRequest(Action<Path, bool> callback, Vector3 start, Vector3 end, int hash)
         {
             this.hash = hash;
-            this.pathStart = start * Inverse;
-            this.pathEnd = end * Inverse;
+            this.pathStart = start;
+            this.pathEnd = end;
             this.callback = callback;
             smooth = false;
             stopDist = turnDist = 0.0f;

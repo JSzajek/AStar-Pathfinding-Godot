@@ -172,7 +172,7 @@ namespace AStar
 		public abstract void GenerateMap();
 
 		///<inheritdoc/>
-		public void RequestPath(PathRequest request)
+		public virtual void RequestPath(PathRequest request)
 		{
 			if (isMapGenerated)
 			{

@@ -61,6 +61,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.65781, 1, -7.46238 )
 MoveSpeed = 3.0
 TurningSpeed = 3.0
 TurningDistance = 3.0
+StoppingDistance = 3.0
 ShowPath = true
 TargetPath = NodePath("../../Target")
 

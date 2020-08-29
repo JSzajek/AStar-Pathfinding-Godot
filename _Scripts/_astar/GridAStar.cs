@@ -14,7 +14,8 @@ namespace AStar
 	public class GridAStar : BaseAStar
 	{
 		#region Constants
-
+		// Inverse Vector in Z-axis to accommodate for negative forward direction
+        private static readonly Vector3 Inverse = new Vector3(1,1,-1);
 		private const float MIN_PATH_UPDATE_TIME = 0.9f;
 
 		#endregion Constants
@@ -171,11 +172,25 @@ namespace AStar
 			AStarLinker.ExportGrid(sceneMapDataPath);
 		}
 
+		/// <summary>
+		/// Performs memory managment freeing the node.
+		/// </summary>
 		public override void _ExitTree()    
 		{
 			GD.Print("Grid Exiting the tree");
 			curve.Dispose();
 			base._ExitTree();
+		}
+
+		/// <inheritdoc/>
+		public override void RequestPath(PathRequest request)
+		{
+			if (isMapGenerated)
+			{
+				request.pathStart *= Inverse;
+				request.pathEnd *= Inverse;
+				pathRequestManager.RequestPath(request);
+			}
 		}
 
 		#endregion Public Methods

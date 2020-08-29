@@ -35,7 +35,6 @@ public class Dll
     {
         Load(FileSystem.EnsureFilePath(path));
 		_nativeLibDestroy = (nativeLibDestroy)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "native_lib_destroy"), typeof(nativeLibDestroy));
-        _releaseMemory = (releaseMemory)Marshal.GetDelegateForFunctionPointer(NativeMethods.GetProcAddress(pDll, "releaseMemory"), typeof(releaseMemory));
     }
 
     #endregion Constructors

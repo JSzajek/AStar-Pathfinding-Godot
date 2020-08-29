@@ -6,7 +6,6 @@ using Godot;
 /// </summary>
 public class FreeingNode : Node
 {
-
     /// <summary>
     /// Performs memory managment freeing the node.
     /// </summary>
