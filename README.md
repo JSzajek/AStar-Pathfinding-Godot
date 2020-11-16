@@ -7,7 +7,7 @@ to bring a more performant 3d path finding in the Godot game engine. Furthermore
 a way that they can be utilized in other game engines as well (eg. Unity).
 
 
-**Disclaimer:** All implementations refernce their relevent sources. As well as none of these implementations claim to be the
+**Disclaimer:** All implementations references their relevent sources. As well as none of these implementations claim to be the
 most efficent implementation - probably more efficent implementations within the engine. 
 But these implementations are done in an exercise to learn about the involved algorithms. 
 
